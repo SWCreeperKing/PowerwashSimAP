@@ -1,0 +1,111 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <AssemblyName>PowerwashSimAP</AssemblyName>
+        <Product>PowerwashSimArchipelagoRandomizer</Product>
+        <Version>1.0.0</Version>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>13</LangVersion>
+        <RestoreAdditionalProjectSources>
+            https://api.nuget.org/v3/index.json;
+            https://nuget.bepinex.dev/v3/index.json;
+            https://nuget.samboy.dev/v3/index.json
+        </RestoreAdditionalProjectSources>
+        <RootNamespace>PowerwashSimAP</RootNamespace>
+    </PropertyGroup>
+
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+        <Copy
+                SourceFiles="bin/Debug/net48//PowerwashSimAP.dll"
+                DestinationFolder="../../BepInEx/plugins/SW_CreeperKing.ArchipelagoMod"
+        />
+    </Target>
+
+    <ItemGroup>
+        <!--        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>-->
+        <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>..\..\BepInEx\core\0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>..\..\BepInEx\unhollowed\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.Core">
+            <HintPath>..\..\BepInEx\core\BepInEx.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.IL2CPP" IncludeAssets="compile">
+            <HintPath>..\..\BepInEx\core\BepInEx.IL2CPP.dll</HintPath>
+        </Reference>
+        <Reference Include="BepInEx.Preloader.Core">
+            <HintPath>..\..\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Core">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Data">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Data.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.IO.Compression">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.IO.Compression.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Memory">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Memory.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Numerics">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Numerics.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Numerics.Vectors">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Numerics.Vectors.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Runtime.CompilerServices.Unsafe">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Runtime.Serialization">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Runtime.Serialization.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Threading.Tasks.Extensions">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Threading.Tasks.Extensions.dll</HintPath>
+        </Reference>
+        <Reference Include="Il2CppSystem.Xml.Linq">
+          <HintPath>..\..\BepInEx\unhollowed\Il2CppSystem.Xml.Linq.dll</HintPath>
+        </Reference>
+        <Reference Include="PWS">
+            <HintPath>..\..\BepInEx\unhollowed\PWS.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Data.Linq" />
+        <Reference Include="UnhollowerBaseLib">
+            <HintPath>..\..\BepInEx\core\UnhollowerBaseLib.dll</HintPath>
+        </Reference>
+        <Reference Include="UnhollowerRuntimeLib">
+            <HintPath>..\..\BepInEx\core\UnhollowerRuntimeLib.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.Collections">
+          <HintPath>..\..\BepInEx\unhollowed\Unity.Collections.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>..\..\BepInEx\unity-libs\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AccessibilityModule">
+          <HintPath>..\..\BepInEx\unity-libs\UnityEngine.AccessibilityModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+          <HintPath>..\..\BepInEx\unity-libs\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.InputModule">
+          <HintPath>..\..\BepInEx\unity-libs\UnityEngine.InputModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule">
+          <HintPath>..\..\BepInEx\unity-libs\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+          <HintPath>..\..\BepInEx\unity-libs\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+</Project>
