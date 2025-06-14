@@ -54,10 +54,11 @@ public class APGui : MonoBehaviour
         if (!ShowGUI) return;
 
         // Create a GUI window
-        GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y, 200, 300), "AP Client");
 
         if (!ApDirtClient.IsConnected())
         {
+            GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y, 200, 300), "AP Client");
+
             GUI.Label(new Rect(20 + Offset.x, 40 + Offset.y, 300, 30), "Address:port", TextStyle);
             Ipporttext = GUI.TextField(new Rect(20 + Offset.x, 60 + Offset.y, 180, 25), Ipporttext, 25);
 
@@ -66,6 +67,13 @@ public class APGui : MonoBehaviour
 
             GUI.Label(new Rect(20 + Offset.x, 140 + Offset.y, 300, 30), "Slot", TextStyle);
             Slot = GUI.TextField(new Rect(20 + Offset.x, 160 + Offset.y, 180, 25), Slot, 25);
+        }
+        else
+        {
+            GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y + 100, 200, 150), "AP Client");
+
+            var hasGoal = ApDirtClient.Jobs >= ApDirtClient.WinCondition;
+            GUI.Label(new Rect(80 + Offset.x, Offset.y + 155, 150, 35), $"Jobs done:\n    {ApDirtClient.Jobs} / {ApDirtClient.WinCondition}", hasGoal ? TextStyleGreen : TextStyleRed);
         }
 
         if (!ApDirtClient.IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Connect"))
@@ -99,9 +107,5 @@ public class APGui : MonoBehaviour
             ApDirtClient.IsConnected() ? TextStyleGreen : TextStyleRed);
     }
 
-    private void Update()
-    {
-        // ApDuckClient.Update(null);
-        // MainMenuPatch.NewGame.SetActive(ApDuckClient.IsConnected());
-    }
+    private void Update() { ApDirtClient.Update(); }
 }

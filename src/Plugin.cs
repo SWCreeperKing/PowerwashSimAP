@@ -20,7 +20,6 @@ public class Plugin : BasePlugin
         Log = base.Log;
 
         ClassInjector.RegisterTypeInIl2Cpp<APGui>();
-        ClassInjector.RegisterTypeInIl2Cpp<ApDisconnectWarn>();
         Harmony.CreateAndPatchAll(typeof(LevelProgressionPatch));
         Harmony.CreateAndPatchAll(typeof(JobLevelPatch));
         Harmony.CreateAndPatchAll(typeof(MainMenuPatch));
