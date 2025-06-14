@@ -24,6 +24,7 @@ public class Plugin : BasePlugin
         Harmony.CreateAndPatchAll(typeof(LevelProgressionPatch));
         Harmony.CreateAndPatchAll(typeof(JobLevelPatch));
         Harmony.CreateAndPatchAll(typeof(MainMenuPatch));
+        Harmony.CreateAndPatchAll(typeof(MainMenuButtonPatch));
         
         Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }

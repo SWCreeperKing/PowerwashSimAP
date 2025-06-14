@@ -11,6 +11,6 @@ public static class JobLevelPatch
     [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPrefix]
     public static void Init(JobListElement __instance)
     {
-        __instance.gameObject.SetActive(Allowed.Contains(__instance.Content.UniqueName));
+        // __instance.gameObject.SetActive(Allowed.Contains(__instance.Content.UniqueName));
     }
 }

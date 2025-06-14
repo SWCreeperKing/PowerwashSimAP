@@ -20,7 +20,7 @@ public static class ApDirtClient
             Plugin.Log.LogInfo($"Attempting to connect [{address}]:[{port}] [{password}] [{slot}]");
 
             var connectError = Client.TryConnect(new LoginInfo(port, slot, address, password), 0x0BF6E0BB,
-                "Placid Plastic Duck Simulator", AllItems);
+                "Powerwash Simulator", AllItems);
 
             if (connectError is not null && connectError.Length > 0)
             {

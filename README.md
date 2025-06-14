@@ -13,6 +13,7 @@
 
 ## Randomizer Info
 
+- Can only play in freeplay
 - Job Randomizer
 
 ---
