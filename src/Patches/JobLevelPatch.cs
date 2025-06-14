@@ -8,7 +8,7 @@ public static class JobLevelPatch
 {
     public static List<string> Allowed = [];
 
-    [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPrefix]
+    [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPostfix]
     public static void Init(JobListElement __instance)
     {
         __instance.gameObject.SetActive(Allowed.Contains(__instance.Content.UniqueName));
