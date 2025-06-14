@@ -59,4 +59,7 @@ public static class Locations
 
     public static Dictionary<string, string> SceneNameToLocationName =
         RawLocationData.ToDictionary(arr => arr[2], arr => arr[1]);
+    
+    public static Dictionary<string, string> LabelNameToLocationName =
+        RawLocationData.ToDictionary(arr => arr[0], arr => arr[1]);
 }

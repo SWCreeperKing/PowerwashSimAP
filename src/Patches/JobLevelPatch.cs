@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using PWS;
+using static PowerwashSimAP.ApDirtClient;
+using static PowerwashSimAP.Patches.Locations;
 
 namespace PowerwashSimAP.Patches;
 
@@ -11,6 +13,7 @@ public static class JobLevelPatch
     [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPostfix]
     public static void Init(JobListElement __instance)
     {
-        __instance.gameObject.SetActive(Allowed.Contains(__instance.Content.UniqueName));
+        var sceneName = __instance.Content.UniqueName;
+        __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissing(LabelNameToLocationName[sceneName]));
     }
 }

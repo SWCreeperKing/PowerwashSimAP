@@ -95,4 +95,7 @@ public static class ApDirtClient
         HasGoaled = true;
         Client.Goal();
     }
+
+    public static bool IsMissing(string locationName)
+        => Client is not null && Client.MissingLocations.Any(kv => kv.Value.LocationName.StartsWith(locationName));
 }

@@ -1,3 +1,8 @@
+# v.0.1.1
+
+- [Client] Completed levels will hide themselves in the level selection
+
+---
 # v.0.1-hf3
 
 - [ApWorld] Fixed `start with van` causing an error if turned on (2am programming moment)
