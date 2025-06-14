@@ -13,7 +13,7 @@
 
 ## Randomizer Info
 
-TBD
+- Job Randomizer
 
 ---
 

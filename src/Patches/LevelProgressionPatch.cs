@@ -12,8 +12,7 @@ public static class LevelProgressionPatch
     [HarmonyPatch(typeof(LevelProgressionSender), "Start"), HarmonyPostfix]
     public static void Init(LevelProgressionSender __instance)
     {
-        Component component = __instance;
-        Plugin.Log.LogInfo($"Scene name: [{component.gameObject.scene.name}]");
+        Plugin.Log.LogInfo($"Scene name: [{__instance.gameObject.scene.name}]");
         
         var initPercent = __instance.m_currentPercentage;
         LastSentPercentage = (int)(Math.Floor(initPercent/5f) * 5);
