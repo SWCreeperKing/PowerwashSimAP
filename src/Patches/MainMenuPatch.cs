@@ -6,14 +6,17 @@ namespace PowerwashSimAP.Patches;
 
 public static class MainMenuPatch
 {
+    public static GameObject ClientUi; 
+    
     [HarmonyPatch(typeof(PlayerUIInput), "Start"), HarmonyPostfix]
     public static void Start(PlayerUIInput __instance)
     {
         if (__instance.gameObject.scene.name != "DontDestroyOnLoad") return;
-
-        var obj = __instance.gameObject;
+        if (ClientUi is not null) return;
+        
+        ClientUi = __instance.gameObject;
         APGui.Offset = new Vector2(15, 250);
-        obj.AddComponent<APGui>();
+        ClientUi.AddComponent<APGui>();
     }
     
     public static GameObject GetObject(string name) => GameObject.Find(name);

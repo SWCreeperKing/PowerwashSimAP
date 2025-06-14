@@ -1,32 +1,35 @@
 using System;
+using System.Linq;
 using HarmonyLib;
 using PWS.Analytics;
 using UnityEngine;
+using static PowerwashSimAP.ApDirtClient;
 
 namespace PowerwashSimAP.Patches;
 
 public static class LevelProgressionPatch
 {
     public static int LastSentPercentage;
-    
+    public static string LocationName;
+
     [HarmonyPatch(typeof(LevelProgressionSender), "Start"), HarmonyPostfix]
     public static void Init(LevelProgressionSender __instance)
     {
         Plugin.Log.LogInfo($"Scene name: [{__instance.gameObject.scene.name}]");
-        
-        var initPercent = __instance.m_currentPercentage;
-        LastSentPercentage = (int)(Math.Floor(initPercent/5f) * 5);
-        Plugin.Log.LogInfo($"Scene source: [{__instance}]");
-        Plugin.Log.LogInfo($"init percent: [{initPercent}], 5% milestone: [{LastSentPercentage}]");
+        LocationName = Locations.SceneNameToLocationName[__instance.gameObject.scene.name];
     }
-    
+
     [HarmonyPatch(typeof(LevelProgressionSender), "HandleProgressChanged"), HarmonyPostfix]
     public static void Update(LevelProgressionSender __instance)
     {
+        if (Client is null) return;
         var percentage = __instance.m_currentPercentage;
-        
-        if (percentage % 5 != 0 || LastSentPercentage == percentage) return;
+        if (percentage % 20 != 0 || LastSentPercentage == percentage) return;
         LastSentPercentage = percentage;
-        Plugin.Log.LogInfo($"Percentage: {percentage}");
+        var percentName = $"{LocationName} {percentage}%";
+
+        if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) return;
+        var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
+        Client.SendLocation(location);
     }
 }
