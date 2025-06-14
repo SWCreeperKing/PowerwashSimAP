@@ -73,7 +73,7 @@ public class APGui : MonoBehaviour
             GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y + 100, 200, 150), "AP Client");
 
             var hasGoal = ApDirtClient.Jobs >= ApDirtClient.WinCondition;
-            GUI.Label(new Rect(80 + Offset.x, Offset.y + 155, 150, 35), $"Jobs done:\n    {ApDirtClient.Jobs} / {ApDirtClient.WinCondition}", hasGoal ? TextStyleGreen : TextStyleRed);
+            GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35), $"[A Job Well Done] mcguffins:\n    {ApDirtClient.Jobs} / {ApDirtClient.WinCondition}", hasGoal ? TextStyleGreen : TextStyleRed);
         }
 
         if (!ApDirtClient.IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Connect"))
