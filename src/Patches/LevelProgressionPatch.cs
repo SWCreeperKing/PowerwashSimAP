@@ -66,12 +66,24 @@ public static class LevelProgressionPatch
             while (LastPercentChecked <= percentage)
             {
                 var percentName = $"{LocationName} {LastPercentChecked}%";
-                LastPercentChecked++;
+                
+                // if (LastPercentChecked == 100) // testing failsafe
+                // {
+                //     foreach (var loc in Client.MissingLocations.Where(kv
+                //                  => kv.Value.LocationName.StartsWith(LocationName)))
+                //     {
+                //         if (ChecksToSendQueue.Contains(loc.Key)) continue;
+                //         ChecksToSendQueue.Enqueue(loc.Key);
+                //     }
+                // }
 
+                LastPercentChecked++;
                 if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) continue;
                 var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
-                if (ChecksToSendQueue.Contains(location)) continue;
-                ChecksToSendQueue.Enqueue(location);
+                if (!ChecksToSendQueue.Contains(location))
+                {
+                    ChecksToSendQueue.Enqueue(location);
+                }
             }
         }
     }
