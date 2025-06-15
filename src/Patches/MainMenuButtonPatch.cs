@@ -1,3 +1,4 @@
+using System.Linq;
 using FuturLab;
 using HarmonyLib;
 
@@ -5,11 +6,18 @@ namespace PowerwashSimAP.Patches;
 
 public static class MainMenuButtonPatch
 {
+    public static string[] ButtonBlacklist =
+    [
+        "MainMenuButton_Career", "MainMenuButton_Specials", "MainMenuButton_Challenges", "MainMenuButton_DLC",
+            "CategoryNavigateLeftButton", "CategoryNavigateRightButton"
+    ];
+
     [HarmonyPatch(typeof(FuturButton), "Start"), HarmonyPostfix]
     public static void Start(FuturButton __instance)
     {
-        if (__instance.gameObject.name is not ("MainMenuButton_Career" or "MainMenuButton_Specials"
-            or "MainMenuButton_Challenges" or "MainMenuButton_DLC")) return;
+        Plugin.Log.LogInfo($"{__instance.gameObject.name} | [{ButtonBlacklist.Contains(__instance.gameObject.name)}]");
+        if (!ButtonBlacklist.Contains(__instance.gameObject.name)) return;
         __instance.gameObject.SetActive(false);
+        __instance.gameObject.GetComponent<FuturAnimatedButton>().enabled = false;
     }
 }

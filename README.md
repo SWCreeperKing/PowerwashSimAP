@@ -13,8 +13,17 @@
 
 ## Randomizer Info
 
-- Can only play in freeplay
-- Job Randomizer
+- Can only play in Free Play
+- Levels are locked and need an unlock item to play them
+  - unlock item is random
+- Starting level is random unless you use the yaml setting
+- Levels will hide themselves once all their checks are done
+- Can choose which levels to add to the level pool
+- Objectsanity
+  - Cleaning individual parts gives checks
+- Navigation (left and right) buttons disabled
+
+- Current Goal Condition is McGuffin Hunt
 
 ---
 

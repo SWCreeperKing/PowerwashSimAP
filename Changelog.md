@@ -1,3 +1,16 @@
+# v.0.2
+
+- [ApWorld] Changed how needed mcguffins is calculated
+- [ApWorld] Added Objectsanity
+- [ApWorld] Percentsanity is now configurable
+- [Yaml] Added `sanities` option
+- [Yaml] Added `percentsanity` setting
+- [Yaml] Added `allow_percentsanity_below_7` host yaml option
+- [Yaml] Added `allow_objectsanity` host yaml option
+- [Client] Support for Precentsanity settings
+- [Client] Support for Objectsanity
+- [Client] Disabled navigation buttons
+
 # v.0.1.4
 
 - [Client] Completed levels will hide themselves in the level selection
