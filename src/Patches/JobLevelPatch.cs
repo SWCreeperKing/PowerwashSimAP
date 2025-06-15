@@ -13,7 +13,7 @@ public static class JobLevelPatch
     [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPostfix]
     public static void Init(JobListElement __instance)
     {
-        if (Client is null) return;
+        // if (Client is null) return;
         var sceneName = __instance.Content.UniqueName;
         __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissing(LabelNameToLocationName[sceneName]));
     }
