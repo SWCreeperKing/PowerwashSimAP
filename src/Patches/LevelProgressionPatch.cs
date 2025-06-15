@@ -19,7 +19,6 @@ public static class LevelProgressionPatch
     public static string LocationName;
     public static int LastPercentChecked = 1;
     public static Dictionary<string, WashTarget> WashTargets = [];
-    public static List<string> Cleaned = [];
 
     [HarmonyPatch(typeof(LevelProgressionSender), "Start"), HarmonyPostfix]
     public static void Init(LevelProgressionSender __instance)
@@ -52,13 +51,12 @@ public static class LevelProgressionPatch
         {
             foreach (var washKv in WashTargets)
             {
-                if (Cleaned.Contains(washKv.Key)) continue;
                 if (washKv.Value.CleanProgress < 1) continue;
                 var locationName = $"{LocationName}: {washKv.Key}";
                 if (Client.MissingLocations.All(kv => kv.Value.LocationName != locationName)) continue;
                 var location = Client.MissingLocations.First(kv => kv.Value.LocationName == locationName).Key;
-                ChecksToSend.Add(location);
-                Cleaned.Add(washKv.Key);
+                if (ChecksToSendQueue.Contains(location)) continue;
+                ChecksToSendQueue.Enqueue(location);
             }
         }
 
@@ -72,7 +70,8 @@ public static class LevelProgressionPatch
 
                 if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) continue;
                 var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
-                ChecksToSend.Add(location);
+                if (ChecksToSendQueue.Contains(location)) continue;
+                ChecksToSendQueue.Enqueue(location);
             }
         }
     }

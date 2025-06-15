@@ -1,3 +1,8 @@
+# v.0.2.2
+
+- [ApWorld] Fixed some Land Vehicle Objectsanity Parts not being mapped correctly 
+- [Client] Improved stability of check sending
+
 # v.0.2.1
 
 - [Client] Optimized (a little bit) sending a lot of checks at once 

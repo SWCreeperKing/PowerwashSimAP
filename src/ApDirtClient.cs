@@ -1,10 +1,12 @@
 #nullable enable
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Archipelago.MultiClient.Net.Enums;
 using CreepyUtil.Archipelago;
+using FuturLab;
 using PowerwashSimAP.Patches;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
@@ -13,7 +15,8 @@ namespace PowerwashSimAP;
 
 public static class ApDirtClient
 {
-    public static List<long> ChecksToSend = [];
+    private static List<long> ChecksToSend = [];
+    public static ConcurrentQueue<long> ChecksToSendQueue = [];
     public static ApClient? Client;
     public static long WinCondition;
     public static int Jobs;
@@ -121,6 +124,12 @@ public static class ApDirtClient
             JobLevelPatch.Allowed.Add(Locations.LevelUnlockDictionary[locationName]);
         }
 
+        while (!ChecksToSendQueue.IsEmpty)
+        {
+            ChecksToSendQueue.TryDequeue(out var location);
+            ChecksToSend.Add(location);
+        }
+
         if (Jobs < WinCondition || HasGoaled) return;
         HasGoaled = true;
         Client.Goal();
@@ -133,8 +142,8 @@ public static class ApDirtClient
     private static void SendChecks()
     {
         Plugin.Log.LogInfo("Send");
-        NextSend = 4;
-        new Task((Action)(() => TrySendLocations(ChecksToSend))).RunWithTimeout(Client.ServerTimeout);
+        NextSend = 3;
+        new Task((Action)(() => TrySendLocations(ChecksToSend))).RunWithTimeout(Client!.ServerTimeout);
         ChecksToSend.Clear();
     }
 
@@ -143,8 +152,11 @@ public static class ApDirtClient
         if (Client is null) return;
         if (Client.MissingLocations.Count == 0)
             return;
-        Client.Session.Locations.CompleteLocationChecks(ids.Select(id => Client.MissingLocations[id].LocationId)
-                                                           .ToArray());
+
+        Client.Session.Locations.CompleteLocationChecks(ids
+                                                       .Where(id => Client.MissingLocations.ContainsKey(id))
+                                                       .Select(id => Client.MissingLocations[id].LocationId)
+                                                       .ToArray());
         foreach (var id in ids)
         {
             Client.MissingLocations.Remove(id);
