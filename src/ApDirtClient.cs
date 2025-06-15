@@ -59,7 +59,7 @@ public static class ApDirtClient
         var startingLocation = (string)slotdata["starting_location"]!;
         WinCondition = (long)slotdata["jobs_done"];
         JobLevelPatch.Allowed = [Locations.LevelUnlockDictionary[$"{startingLocation} Unlock"]];
-        Plugin.Log.LogInfo($"Raw starting location: [{startingLocation}] win condition: [{WinCondition}]");
+        // Plugin.Log.LogInfo($"Raw starting location: [{startingLocation}] win condition: [{WinCondition}]");
         Jobs = 0;
 
         Plugin.Log.LogInfo("Connnected");
@@ -79,7 +79,7 @@ public static class ApDirtClient
         foreach (var item in Client.GetOutstandingItems())
         {
             var locationName = item?.ItemName!;
-            Plugin.Log.LogInfo($"Item gotten: [{locationName}]");
+            // Plugin.Log.LogInfo($"Item gotten: [{locationName}]");
 
             if (locationName == "A Job Well Done")
             {
