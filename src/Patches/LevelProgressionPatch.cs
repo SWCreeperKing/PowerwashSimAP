@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using CreepyUtil.Archipelago;
 using FuturLab;
 using HarmonyLib;
 using PWS;
@@ -24,7 +26,6 @@ public static class LevelProgressionPatch
     {
         // Plugin.Log.LogInfo($"Scene name: [{__instance.gameObject.scene.name}]");
         WashTargets.Clear();
-        Cleaned.Clear();
         LocationName = Locations.SceneNameToLocationName[__instance.gameObject.scene.name];
         LastPercentChecked = 1;
 
@@ -37,37 +38,42 @@ public static class LevelProgressionPatch
 
         // GUIUtility.systemCopyBuffer = $"[{string.Join(", ", WashTargets.Keys.Select(s => $"\"{s}\""))}]";
         // Plugin.Log.LogInfo("Copied");
+        UpdateChecks(__instance);
     }
 
     [HarmonyPatch(typeof(LevelProgressionSender), "HandleProgressChanged"), HarmonyPostfix]
-    public static void Update(LevelProgressionSender __instance)
+    public static void ProgressChanged(LevelProgressionSender __instance) => UpdateChecks(__instance);
+
+    public static void UpdateChecks(LevelProgressionSender __instance)
     {
         if (Client is null) return;
 
-        if ((bool)Client.SlotData["objectsanity"])
+        if (Objectsanity)
         {
             foreach (var washKv in WashTargets)
             {
                 if (Cleaned.Contains(washKv.Key)) continue;
                 if (washKv.Value.CleanProgress < 1) continue;
                 var locationName = $"{LocationName}: {washKv.Key}";
-                if (Client.MissingLocations.All(kv => kv.Value.LocationName != locationName)) return;
+                if (Client.MissingLocations.All(kv => kv.Value.LocationName != locationName)) continue;
                 var location = Client.MissingLocations.First(kv => kv.Value.LocationName == locationName).Key;
-                Client.SendLocation(location);
+                ChecksToSend.Add(location);
                 Cleaned.Add(washKv.Key);
             }
         }
 
-        if (!(bool)Client.SlotData["percentsanity"]) return;
-        var percentage = __instance.m_currentPercentage;
-        while (LastPercentChecked <= percentage)
+        if (Percentsanity)
         {
-            var percentName = $"{LocationName} {LastPercentChecked}%";
-            LastPercentChecked++;
+            var percentage = __instance.m_currentPercentage;
+            while (LastPercentChecked <= percentage)
+            {
+                var percentName = $"{LocationName} {LastPercentChecked}%";
+                LastPercentChecked++;
 
-            if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) return;
-            var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
-            Client.SendLocation(location);
+                if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) continue;
+                var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
+                ChecksToSend.Add(location);
+            }
         }
     }
 }

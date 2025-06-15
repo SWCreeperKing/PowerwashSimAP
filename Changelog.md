@@ -1,3 +1,9 @@
+# v.0.2.1
+
+- [Client] Optimized (a little bit) sending a lot of checks at once 
+- [Client] Fixed a few bugs around sending checks
+
+---
 # v.0.2
 
 - [ApWorld] Changed how needed mcguffins is calculated
@@ -11,6 +17,7 @@
 - [Client] Support for Objectsanity
 - [Client] Disabled navigation buttons
 
+---
 # v.0.1.4
 
 - [Client] Completed levels will hide themselves in the level selection
