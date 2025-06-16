@@ -10,6 +10,7 @@ using PWS.Analytics;
 using PWS.TexturePainter;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
+using static PowerwashSimAP.Patches.Locations;
 using Object = UnityEngine.Object;
 
 namespace PowerwashSimAP.Patches;
@@ -25,7 +26,7 @@ public static class LevelProgressionPatch
     {
         // Plugin.Log.LogInfo($"Scene name: [{__instance.gameObject.scene.name}]");
         WashTargets.Clear();
-        LocationName = Locations.SceneNameToLocationName[__instance.gameObject.scene.name];
+        LocationName = SceneNameToLocationName[__instance.gameObject.scene.name];
         LastPercentChecked = 1;
 
         var washTargetRoot = Object.FindObjectOfType<WashTargetRoot>();
