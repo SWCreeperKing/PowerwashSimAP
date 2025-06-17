@@ -8,13 +8,16 @@ namespace PowerwashSimAP.Patches;
 
 public static class JobLevelPatch
 {
-    public static List<string> Allowed = [];
-
     [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPostfix]
     public static void Init(JobListElement __instance)
     {
-        if (Client is null) return;
         var sceneName = __instance.Content.UniqueName;
+        if (Plugin.IsDebug is Plugin.DebugWant.Jobs)
+        {
+            Plugin.Log.LogInfo(sceneName);
+        }
+        
+        if (Client is null) return;
         __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissing(LabelNameToLocationName[sceneName]));
     }
 }

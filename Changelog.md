@@ -1,3 +1,13 @@
+# v.0.3
+
+- [ApWorld] Added local fill (98%)
+- [ApWorld] Added all free dlc except seasonal specials
+- [Yaml] Locations are now separated
+- [Client] Made more buttons disappear based on what you can do
+- [Client] Now hides instead of disables the navigation buttons
+- [Client] Possible optimization witch Objectsanity code
+- [Client] Fixed Objectsanity sending checks only when level progress changed
+
 # v.0.2.2
 
 - [ApWorld] Fixed some Land Vehicle Objectsanity Parts not being mapped correctly 

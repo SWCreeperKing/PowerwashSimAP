@@ -4,9 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.Enums;
 using CreepyUtil.Archipelago;
-using FuturLab;
 using PowerwashSimAP.Patches;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
@@ -23,6 +21,7 @@ public static class ApDirtClient
     public static bool HasGoaled;
     public static bool Objectsanity;
     public static bool Percentsanity;
+    public static List<string> Allowed = [];
     private static double NextSend = 4;
 
     public static string[]? TryConnect(int port, string slot, string address, string password)
@@ -85,8 +84,7 @@ public static class ApDirtClient
             Objectsanity = false;
         }
 
-        JobLevelPatch.Allowed = [Locations.LevelUnlockDictionary[$"{startingLocation} Unlock"]];
-        // Plugin.Log.LogInfo($"Raw starting location: [{startingLocation}] win condition: [{WinCondition}]");
+        Allowed = [Locations.LevelUnlockDictionary[$"{startingLocation} Unlock"]];
         Jobs = 0;
 
         Plugin.Log.LogInfo("Connnected");
@@ -112,7 +110,6 @@ public static class ApDirtClient
         foreach (var item in Client.GetOutstandingItems())
         {
             var locationName = item?.ItemName!;
-            // Plugin.Log.LogInfo($"Item gotten: [{locationName}]");
 
             if (locationName == "A Job Well Done")
             {
@@ -121,7 +118,8 @@ public static class ApDirtClient
             }
 
             if (!locationName.EndsWith(" Unlock")) return;
-            JobLevelPatch.Allowed.Add(Locations.LevelUnlockDictionary[locationName]);
+            Plugin.Log.LogInfo($"Item gotten: [{locationName}]");
+            Allowed.Add(Locations.LevelUnlockDictionary[locationName]);
         }
 
         while (!ChecksToSendQueue.IsEmpty)
@@ -141,7 +139,6 @@ public static class ApDirtClient
 
     private static void SendChecks()
     {
-        Plugin.Log.LogInfo("Send");
         NextSend = 3;
         new Task((Action)(() => TrySendLocations(ChecksToSend))).RunWithTimeout(Client!.ServerTimeout);
         ChecksToSend.Clear();
