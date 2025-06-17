@@ -1,3 +1,9 @@
+# v.0.3.2
+
+- [ApWorld] Added yaml error for when no sanity exists
+- [Client] Optimized receiving items
+
+---
 # v.0.3.1
 
 - [ApWorld] Hopefully balanced local fill a bit better

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CreepyUtil.Archipelago;
-using PowerwashSimAP.Patches;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
+using static PowerwashSimAP.Patches.Locations;
 
 namespace PowerwashSimAP;
 
@@ -84,7 +84,7 @@ public static class ApDirtClient
             Objectsanity = false;
         }
 
-        Allowed = [Locations.LevelUnlockDictionary[$"{startingLocation} Unlock"]];
+        Allowed = [LevelUnlockDictionary[$"{startingLocation} Unlock"]];
         Jobs = 0;
 
         Plugin.Log.LogInfo("Connnected");
@@ -107,21 +107,10 @@ public static class ApDirtClient
             SendChecks();
         }
 
-        foreach (var item in Client.GetOutstandingItems())
-        {
-            var locationName = item?.ItemName!;
-
-            if (locationName == "A Job Well Done")
-            {
-                Jobs++;
-                return;
-            }
-
-            if (!locationName.EndsWith(" Unlock")) return;
-            Plugin.Log.LogInfo($"Item gotten: [{locationName}]");
-            Allowed.Add(Locations.LevelUnlockDictionary[locationName]);
-        }
-
+        var newItems = Client.GetOutstandingItems().Where(item => item?.Flags != 0).Select(item => item?.ItemName!).ToArray();
+        Jobs += newItems.Count(item => item == "A Job Well Done");
+        Allowed.AddRange(newItems.Where(item => item.EndsWith(" Unlock")).Select(item => LevelUnlockDictionary[item]));
+        
         while (!ChecksToSendQueue.IsEmpty)
         {
             ChecksToSendQueue.TryDequeue(out var location);
