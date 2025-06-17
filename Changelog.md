@@ -1,3 +1,11 @@
+# v.0.3.1
+
+- [ApWorld] Hopefully balanced local fill a bit better
+  - Percentsanity: 50%
+  - Objectsanity: 60%
+  - Percentsanity and Objectsanity: 97%
+
+---
 # v.0.3
 
 - [ApWorld] Added local fill (98%)
@@ -8,11 +16,13 @@
 - [Client] Possible optimization witch Objectsanity code
 - [Client] Fixed Objectsanity sending checks only when level progress changed
 
+---
 # v.0.2.2
 
 - [ApWorld] Fixed some Land Vehicle Objectsanity Parts not being mapped correctly 
 - [Client] Improved stability of check sending
 
+---
 # v.0.2.1
 
 - [Client] Optimized (a little bit) sending a lot of checks at once 
