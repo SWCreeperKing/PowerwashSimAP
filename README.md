@@ -30,6 +30,17 @@
 - Current Goal Condition is McGuffin Hunt
 - Includes local fill (not adjustable)
 
+### Multiplayer
+
+- Only host with mod
+  - confirmed to work
+- Host doesn't have mod but a player does
+  - 50/50 does or doesn't work
+- Multiple people with the mod
+  - largely depends on the above
+    - they are all connected to same slot
+    - they all have different slots
+
 ---
 
 # Special Thanks
