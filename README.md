@@ -32,14 +32,17 @@
 
 ### Multiplayer
 
+Working on levels you don't have a `[level] Unlock` for is considered out of logic 
+
 - Only host with mod
   - confirmed to work
-- Host doesn't have mod but a player does (untested)
-  - 50/50 does or doesn't work
-- Multiple people with the mod (untested)
-  - largely depends on the above
-    - they are all connected to same slot
-    - they all have different slots
+- Host doesn't have mod but a player does
+  - confirmed to work
+- Multiple people with the mod
+  - they are all connected to same slot
+    - theoretically works
+  - they all have different slots
+    - theoretically works
 
 ---
 
