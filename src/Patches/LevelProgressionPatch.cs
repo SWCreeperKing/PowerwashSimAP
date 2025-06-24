@@ -1,12 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using PWS;
 using PWS.Analytics;
-using PWS.TexturePainter;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
 using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Patches.WashTargetPatch;
 
 namespace PowerwashSimAP.Patches;
 
@@ -18,16 +16,22 @@ public static class LevelProgressionPatch
     [HarmonyPatch(typeof(LevelProgressionSender), "Start"), HarmonyPostfix]
     public static void Init(LevelProgressionSender __instance)
     {
+        foreach (var washTarget in GlobalTargets)
+        {
+            washTarget.gameObject.GetOrAddComponent<WashTargetUpdate>();
+        }
+        GlobalTargets = [];
+        
         if (Plugin.IsDebug is Plugin.DebugWant.Washables or Plugin.DebugWant.WashablesAndPrint)
         {
             GUIUtility.systemCopyBuffer =
-                $"[\"{__instance.gameObject.scene.name}\"] = [{string.Join(", ", WashTargetPatch.WashTargets.Select(s => $"\"{s}\""))}]";
+                $"[\"{__instance.gameObject.scene.name}\"] = [{string.Join(", ", WashTargets.OrderBy(s => s).Select(s => $"\"{s}\""))}],";
             if (Plugin.IsDebug is Plugin.DebugWant.WashablesAndPrint)
             {
                 Plugin.Log.LogInfo("Copied");
             }
 
-            WashTargetPatch.WashTargets.Clear();
+            WashTargets.Clear();
             return;
         }
 
@@ -46,15 +50,21 @@ public static class LevelProgressionPatch
         {
             var percentName = $"{LocationName} {LastPercentChecked}%";
 
-            // if (LastPercentChecked == 100) // testing failsafe
-            // {
-            //     foreach (var loc in Client.MissingLocations.Where(kv
-            //                  => kv.Value.LocationName.StartsWith(LocationName)))
-            //     {
-            //         if (ChecksToSendQueue.Contains(loc.Key)) continue;
-            //         ChecksToSendQueue.Enqueue(loc.Key);
-            //     }
-            // }
+            if (Plugin.IsDebug is Plugin.DebugWant.Failsafe && LastPercentChecked == 100)
+            {
+                foreach (var loc in Client.MissingLocations.Where(kv
+                             => kv.Value.LocationName.StartsWith(LocationName)))
+                {
+                    if (ChecksToSendQueue.Contains(loc.Key)) continue;
+                    ChecksToSendQueue.Enqueue(loc.Key);
+                }
+            }
+
+            if (LastPercentChecked == 100)
+            {
+                Plugin.Log.LogInfo($"Completed Level: [{LocationName}]");
+                SetLevelCompletion(LocationName);
+            }
 
             LastPercentChecked++;
             if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) continue;

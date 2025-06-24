@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using FuturLab;
 using HarmonyLib;
-using ProceduralWorlds.SceneOptimizer;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
 using static PowerwashSimAP.Patches.Locations;
@@ -43,30 +41,20 @@ public static class MainMenuButtonPatch
             "BonusGridElement(Clone) (3)", "BonusGridElement(Clone) (4)", "BonusGridElement(Clone) (5)",
             "BonusGridElement(Clone) (6)"
         ],
-        ["BonusGridElement(Clone) (0)"] =
-            ["MARS_MARSROVER", "RECREATIONGROUND_FOUNTAIN", "RECREATIONGROUND_MINIGOLF", "DESERT_STEAMLOCOMOTIVE"],
-        ["BonusGridElement(Clone) (1)"] = ["RECREATIONGROUND_FOODTRUCK", "DESERT_SATELLITEDISH", "DESERT_SOLAR"],
-        ["BonusGridElement(Clone) (2)"] =
-            ["RECREATIONGROUND_PAINTBALL", "RESIDENTIALSMALL_SPANISHVILLA", "RESIDENTIALSMALL_EXCAVATOR"],
-        ["BonusGridElement(Clone) (3)"] = ["AQUARIUM", "SUBMARINE"],
-        ["BonusGridElement(Clone) (4)"] = ["MODERNMANSION", "FIREPLANE"],
-        ["BonusGridElement(Clone) (5)"] = ["DESSERTPARLOUR"],
-        ["BonusGridElement(Clone) (6)"] = ["SUBWAYTRAIN", "SCULPTUREPARK"],
+        ["BonusGridElement(Clone) (0)"] = RawLocationData.Skip(38).Take(4).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (1)"] = RawLocationData.Skip(42).Take(3).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (2)"] = RawLocationData.Skip(45).Take(3).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (3)"] = RawLocationData.Skip(48).Take(2).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (4)"] = RawLocationData.Skip(50).Take(2).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (5)"] = RawLocationData.Skip(52).Take(1).Select(arr => arr[0]).ToArray(),
+        ["BonusGridElement(Clone) (6)"] = RawLocationData.Skip(53).Take(2).Select(arr => arr[0]).ToArray(),
 
         // dlc
         ["MainMenuButton_DLC"] = ["DLCGridElement(Clone) (6)", "DLCGridElement(Clone) (7)"],
         ["DLCGridElement(Clone) (6)"] = ["FinalFantasyCampaignScreen(Clone)"],
-        ["FinalFantasyCampaignScreen(Clone)"] =
-        [
-            "WAREHOUSE_SENTINEL", "FINALFANTASY_SHINRASHOWROOM", "FINALFANTASY_SEVENTHHEAVEN",
-            "FINALFANTASY_MIDGARDIORAMA", "WAREHOUSE_AIRBUSTER"
-        ],
+        ["FinalFantasyCampaignScreen(Clone)"] = RawLocationData.Skip(55).Take(5).Select(arr => arr[0]).ToArray(),
         ["DLCGridElement(Clone) (7)"] = ["TombRaiderCampaignScreen(Clone)"],
-        ["TombRaiderCampaignScreen(Clone)"] =
-        [
-            "TOMBRAIDER_MANOR", "TOMBRAIDER_OBSTACLECOURSE", "TOMBRAIDER_VEHICLES", "TOMBRAIDER_MAZE",
-            "TOMBRAIDER_TREASUREROOM"
-        ],
+        ["TombRaiderCampaignScreen(Clone)"] =  RawLocationData.Skip(60).Take(5).Select(arr => arr[0]).ToArray(),
     };
 
     [HarmonyPatch(typeof(FuturButton), "Start"), HarmonyPostfix]

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -10,12 +11,14 @@ namespace PowerwashSimAP.Patches;
 
 public static class WashTargetPatch
 {
-    public static List<string> WashTargets = [];
+    public static HashSet<string> WashTargets = [];
+    public static ConcurrentBag<WashTarget> GlobalTargets = [];
     
     [HarmonyPatch(typeof(WashTarget), "Start"), HarmonyPostfix]
     public static void Start(WashTarget __instance)
     {
-        __instance.gameObject.GetOrAddComponent<WashTargetUpdate>();
+        GlobalTargets.Add(__instance);
+        
         if (Plugin.IsDebug is not (Plugin.DebugWant.Washables or Plugin.DebugWant.WashablesAndPrint)) return;
         WashTargets.Add(__instance.gameObject.name.Replace("_", " "));
         if (Plugin.IsDebug is not Plugin.DebugWant.WashablesAndPrint) return;

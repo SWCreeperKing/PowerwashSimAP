@@ -1,5 +1,8 @@
 ﻿using System.IO;
+using System.Linq;
+using PowerwashSimAP.Patches;
 using UnityEngine;
+using static PowerwashSimAP.ApDirtClient;
 
 namespace PowerwashSimAP;
 
@@ -12,6 +15,7 @@ public class APGui : MonoBehaviour
     public static string Slot = "Powerwasher";
     public static string State = "";
     public static Vector2 Offset = Vector2.zero;
+    public static bool WasPressed;
 
     public static GUIStyle TextStyle = new()
     {
@@ -51,11 +55,12 @@ public class APGui : MonoBehaviour
 
     void OnGUI()
     {
+        if (Plugin.IsDebug is Plugin.DebugWant.Washables) return;
         if (!ShowGUI) return;
 
         // Create a GUI window
 
-        if (!ApDirtClient.IsConnected())
+        if (!IsConnected())
         {
             GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y, 200, 300), "AP Client");
 
@@ -71,12 +76,20 @@ public class APGui : MonoBehaviour
         else
         {
             GUI.Box(new Rect(10 + Offset.x, 10 + Offset.y + 100, 200, 150), "AP Client");
-
-            var hasGoal = ApDirtClient.Jobs >= ApDirtClient.WinCondition;
-            GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35), $"[A Job Well Done] mcguffins:\n    {ApDirtClient.Jobs} / {ApDirtClient.WinCondition}", hasGoal ? TextStyleGreen : TextStyleRed);
+            if (Goal is GoalType.McGuffinHunt)
+            {
+                var hasGoal = Jobs >= WinCondition;
+                GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35),
+                    $"[A Job Well Done] mcguffins:\n    {Jobs} / {WinCondition}",
+                    hasGoal ? TextStyleGreen : TextStyleRed);
+            }
+            else if (GoalLevelsOpen.Any())
+            {
+                GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35), $"Level of interest:\n[{GoalLevelsOpen[0]}]", TextStyle);
+            }
         }
 
-        if (!ApDirtClient.IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Connect"))
+        if (!IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Connect"))
         {
             var ipPortSplit = Ipporttext.Split(':');
             if (!int.TryParse(ipPortSplit[1], out var port))
@@ -85,7 +98,7 @@ public class APGui : MonoBehaviour
                 return;
             }
 
-            var error = ApDirtClient.TryConnect(port, Slot, ipPortSplit[0], Password);
+            var error = TryConnect(port, Slot, ipPortSplit[0], Password);
 
             if (error is not null)
             {
@@ -97,15 +110,15 @@ public class APGui : MonoBehaviour
             File.WriteAllText("ApConnection.txt", $"{Ipporttext}\n{Password}\n{Slot}");
         }
 
-        if (ApDirtClient.IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Disconnect"))
+        if (IsConnected() && GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 180, 30), "Disconnect"))
         {
-            ApDirtClient.Disconnect();
+            Disconnect();
         }
 
         GUI.Label(new Rect(20 + Offset.x, 240 + Offset.y, 300, 30),
-            State != "" ? State : ApDirtClient.IsConnected() ? "Connected" : "Not Connected",
-            ApDirtClient.IsConnected() ? TextStyleGreen : TextStyleRed);
+            State != "" ? State : IsConnected() ? "Connected" : "Not Connected",
+            IsConnected() ? TextStyleGreen : TextStyleRed);
     }
 
-    private void Update() { ApDirtClient.Update(); }
+    private void Update() => ApDirtClient.Update();
 }

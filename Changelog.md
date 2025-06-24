@@ -1,3 +1,16 @@
+# v.0.4
+
+- [ApWorld] Added `Level hunt` goal type
+- [ApWorld] Changed how local fill works
+- [ApWorld] Fixed a few locations missing parts for objectsanity
+- [Yaml] Added `local_fill` yaml setting
+- [Yaml] Added `goal_type` yaml setting
+- [Yaml] Added `levels_to_goal` yaml setting
+- [Yaml] Added `amount_of_levels_to_goal` yaml setting
+- [Yaml] Added `allow_below_localfill_minimums` host yaml setting
+- [Client] Support for `Level hunt`
+- [Client] Minor optimization to my bad code that slowed down level load times
+
 # v.0.3.2
 
 - [ApWorld] Added yaml error for when no sanity exists

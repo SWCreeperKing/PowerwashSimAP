@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using HarmonyLib;
 using PWS;
 using static PowerwashSimAP.ApDirtClient;
@@ -18,6 +17,7 @@ public static class JobLevelPatch
         }
         
         if (Client is null) return;
+        if (Plugin.IsDebug is not Plugin.DebugWant.None) return;
         __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissing(LabelNameToLocationName[sceneName]));
     }
 }
