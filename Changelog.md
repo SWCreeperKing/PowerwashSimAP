@@ -1,3 +1,7 @@
+# v.0.4.1
+
+- [ApWorld] Fixed generation problem with multiple powerwash simulators
+
 # v.0.4
 
 - [ApWorld] Added `Level hunt` goal type
