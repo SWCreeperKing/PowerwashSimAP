@@ -73,11 +73,14 @@ public static class ApDirtClient
         var slotdata = Client?.SlotData!;
         var startingLocation = (string)slotdata["starting_location"]!;
         WinCondition = (long)slotdata["jobs_done"];
-
         if (slotdata.TryGetValue("percentsanity", out var temp)) Percentsanity = (bool)temp;
         if (slotdata.TryGetValue("objectsanity", out var temp1)) Objectsanity = (bool)temp1;
+
         if (slotdata.TryGetValue("goal_levels", out var temp3))
-            Levels = ((string)temp3).Trim('[', ']').Replace("\"", "").Replace("'", "").Split(',');
+        {
+            Levels = ((string)temp3).Split(',').Select(s => s.Trim('\'', '[', ']', ' ', '"')).ToArray();
+        }
+
         if (slotdata.TryGetValue("goal_level_amount", out var temp4)) LevelCount = (long)temp4;
         Goal = Levels.Any() && Levels[0] != "None" ? GoalType.LevelHunt : GoalType.McGuffinHunt;
         Plugin.Log.LogInfo($"[{Goal}] | [{string.Join(", ", Levels)}] | [{startingLocation}]");
@@ -160,9 +163,8 @@ public static class ApDirtClient
     public static void GoalLevelCheck()
     {
         if (Client is null) return;
+        if (Goal is GoalType.McGuffinHunt) return;
         var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        Plugin.Log.LogInfo(
-            $"[{string.Join(", ", data)}] | [{LevelCount}] > [{data.Count(s => Levels.Contains(s))}], [{string.Join(", ", Levels)}] = [{string.Join(", ", data)}]");
         if (LevelCount > data.Count(s => Levels.Contains(s))) return;
         Client.Goal();
         UpdateAvailableLevelGoal();
@@ -171,6 +173,7 @@ public static class ApDirtClient
     public static void UpdateAvailableLevelGoal()
     {
         if (Client is null) return;
+        if (Goal is GoalType.McGuffinHunt) return;
         var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
         GoalLevelsOpen = Levels.Where(str => !data.Contains(str) && Allowed.Contains(LevelDictionary[str])).ToArray();
     }

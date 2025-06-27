@@ -1,6 +1,7 @@
 # v.0.4.1
 
 - [ApWorld] Fixed generation problem with multiple powerwash simulators
+- [Client] Fixed a bug when connecting with more than 1 goal level
 
 # v.0.4
 
