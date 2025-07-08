@@ -4,7 +4,7 @@ using FuturLab;
 using HarmonyLib;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
-using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP.Patches;
 
@@ -23,39 +23,7 @@ public static class MainMenuButtonPatch
         "DLCGridElement(Clone) (5)",
     ];
 
-    public static Dictionary<string, string[]> Lookahead = new()
-    {
-        // base game
-        ["MainMenuButton_CareerOverview"] = ["CareerOverviewScreen(Clone)", "MainMenuButton_Specials"],
-        ["CareerOverviewScreen(Clone)"] = ["LocationsButton", "VehiclesButton"],
-        ["VehiclesButton"] = RawLocationData.Take(18).Select(arr => arr[0]).ToArray(),
-        ["FilterButton(Clone) (0)"] = RawLocationData.Take(12).Select(arr => arr[0]).ToArray(),
-        ["FilterButton(Clone) (1)"] = RawLocationData.Skip(12).Take(2).Select(arr => arr[0]).ToArray(),
-        ["FilterButton(Clone) (2)"] = RawLocationData.Skip(14).Take(4).Select(arr => arr[0]).ToArray(),
-        ["LocationsButton"] = RawLocationData.Skip(18).Take(20).Select(arr => arr[0]).ToArray(),
-
-        // bonus jobs
-        ["MainMenuButton_Specials"] =
-        [
-            "BonusGridElement(Clone) (0)", "BonusGridElement(Clone) (1)", "BonusGridElement(Clone) (2)",
-            "BonusGridElement(Clone) (3)", "BonusGridElement(Clone) (4)", "BonusGridElement(Clone) (5)",
-            "BonusGridElement(Clone) (6)"
-        ],
-        ["BonusGridElement(Clone) (0)"] = RawLocationData.Skip(38).Take(4).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (1)"] = RawLocationData.Skip(42).Take(3).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (2)"] = RawLocationData.Skip(45).Take(3).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (3)"] = RawLocationData.Skip(48).Take(2).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (4)"] = RawLocationData.Skip(50).Take(2).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (5)"] = RawLocationData.Skip(52).Take(1).Select(arr => arr[0]).ToArray(),
-        ["BonusGridElement(Clone) (6)"] = RawLocationData.Skip(53).Take(2).Select(arr => arr[0]).ToArray(),
-
-        // dlc
-        ["MainMenuButton_DLC"] = ["DLCGridElement(Clone) (6)", "DLCGridElement(Clone) (7)"],
-        ["DLCGridElement(Clone) (6)"] = ["FinalFantasyCampaignScreen(Clone)"],
-        ["FinalFantasyCampaignScreen(Clone)"] = RawLocationData.Skip(55).Take(5).Select(arr => arr[0]).ToArray(),
-        ["DLCGridElement(Clone) (7)"] = ["TombRaiderCampaignScreen(Clone)"],
-        ["TombRaiderCampaignScreen(Clone)"] =  RawLocationData.Skip(60).Take(5).Select(arr => arr[0]).ToArray(),
-    };
+    public static Dictionary<string, string[]> Lookahead;
 
     [HarmonyPatch(typeof(FuturButton), "Start"), HarmonyPostfix]
     public static void Start(FuturButton __instance)

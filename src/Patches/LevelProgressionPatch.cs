@@ -3,7 +3,7 @@ using HarmonyLib;
 using PWS.Analytics;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
-using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Locations;
 using static PowerwashSimAP.Patches.WashTargetPatch;
 
 namespace PowerwashSimAP.Patches;
@@ -22,15 +22,9 @@ public static class LevelProgressionPatch
         }
         GlobalTargets = [];
         
-        if (Plugin.IsDebug is Plugin.DebugWant.Washables or Plugin.DebugWant.WashablesAndPrint)
+        if (Plugin.IsDebug is Plugin.DebugWant.Washables)
         {
-            GUIUtility.systemCopyBuffer =
-                $"[\"{__instance.gameObject.scene.name}\"] = [{string.Join(", ", WashTargets.OrderBy(s => s).Select(s => $"\"{s}\""))}],";
-            if (Plugin.IsDebug is Plugin.DebugWant.WashablesAndPrint)
-            {
-                Plugin.Log.LogInfo("Copied");
-            }
-
+            CleanParts[__instance.gameObject.scene.name] = WashTargets.OrderBy(s => s).ToArray();
             WashTargets.Clear();
             return;
         }
@@ -50,7 +44,7 @@ public static class LevelProgressionPatch
         {
             var percentName = $"{LocationName} {LastPercentChecked}%";
 
-            if (Plugin.IsDebug is Plugin.DebugWant.Failsafe && LastPercentChecked == 100)
+            if (LastPercentChecked == 100)
             {
                 foreach (var loc in Client.MissingLocations.Where(kv
                              => kv.Value.LocationName.StartsWith(LocationName)))

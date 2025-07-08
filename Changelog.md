@@ -1,3 +1,8 @@
+# v.0.5.0
+
+- [ApWorld] Added support for paid dlc
+- [Client] Added support for paid dlc
+
 # v.0.4.1
 
 - [ApWorld] Fixed generation problem with multiple powerwash simulators

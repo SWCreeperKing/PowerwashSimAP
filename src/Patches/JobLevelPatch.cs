@@ -1,7 +1,7 @@
 using HarmonyLib;
 using PWS;
 using static PowerwashSimAP.ApDirtClient;
-using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP.Patches;
 

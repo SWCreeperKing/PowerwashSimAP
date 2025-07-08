@@ -6,7 +6,7 @@ using System.Linq;
 using CreepyUtil.Archipelago;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
-using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP;
 
@@ -82,6 +82,8 @@ public static class ApDirtClient
         }
 
         if (slotdata.TryGetValue("goal_level_amount", out var temp4)) LevelCount = (long)temp4;
+        if (LevelCount == 0) LevelCount = Levels.Length;
+        
         Goal = Levels.Any() && Levels[0] != "None" ? GoalType.LevelHunt : GoalType.McGuffinHunt;
         Plugin.Log.LogInfo($"[{Goal}] | [{string.Join(", ", Levels)}] | [{startingLocation}]");
 

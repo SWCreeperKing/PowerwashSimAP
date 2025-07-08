@@ -3,6 +3,7 @@ using System.Linq;
 using PowerwashSimAP.Patches;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
+using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP;
 
@@ -55,7 +56,22 @@ public class APGui : MonoBehaviour
 
     void OnGUI()
     {
-        if (Plugin.IsDebug is Plugin.DebugWant.Washables) return;
+        if (Plugin.IsDebug is Plugin.DebugWant.Washables)
+        {
+            if (GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 300, 30), "Save Washables"))
+            {
+                File.WriteAllText($"{Plugin.ModDir}/Locations.txt",
+                    string.Join("\n", CleanParts.Select(kv => $"{kv.Key}:{string.Join(",", kv.Value)}")));
+                
+                File.WriteAllText("ApworldLocations.py",
+                    $"raw_objectsanity_dict = {{\n{string.Join("\n", CleanParts.Select(kv => $"\t\"{SceneNameToLocationName[kv.Key]}\": [{string.Join(",", kv.Value.Select(v => $"\"{v}\""))}],"))}\n}}");
+                
+                File.WriteAllText("RawLocationNames.txt", string.Join("\n", CleanParts.Select(kv =>  SceneNameToLocationName[kv.Key])));
+            }
+
+            return;
+        }
+
         if (!ShowGUI) return;
 
         // Create a GUI window
@@ -85,7 +101,8 @@ public class APGui : MonoBehaviour
             }
             else if (GoalLevelsOpen.Any())
             {
-                GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35), $"Level of interest:\n[{GoalLevelsOpen[0]}]", TextStyle);
+                GUI.Label(new Rect(20 + Offset.x, Offset.y + 155, 150, 35),
+                    $"Level of interest:\n[{GoalLevelsOpen[0]}]", TextStyle);
             }
         }
 

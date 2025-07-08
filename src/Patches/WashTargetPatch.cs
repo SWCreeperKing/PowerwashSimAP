@@ -5,7 +5,7 @@ using HarmonyLib;
 using PWS.TexturePainter;
 using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
-using static PowerwashSimAP.Patches.Locations;
+using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP.Patches;
 
@@ -19,10 +19,8 @@ public static class WashTargetPatch
     {
         GlobalTargets.Add(__instance);
         
-        if (Plugin.IsDebug is not (Plugin.DebugWant.Washables or Plugin.DebugWant.WashablesAndPrint)) return;
+        if (Plugin.IsDebug is not Plugin.DebugWant.Washables) return;
         WashTargets.Add(__instance.gameObject.name.Replace("_", " "));
-        if (Plugin.IsDebug is not Plugin.DebugWant.WashablesAndPrint) return;
-        Plugin.Log.LogInfo($"Added| [{__instance.gameObject.name}]");
     }
 
     public class WashTargetUpdate : MonoBehaviour
