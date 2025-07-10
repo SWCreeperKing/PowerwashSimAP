@@ -1,13 +1,21 @@
+# v.0.5.1
+
+- [ApWorld] Fixed logic bugs
+- [Client] Totally didn't forget to rebuild before releasing v.0.5.0
+
+---
 # v.0.5.0
 
 - [ApWorld] Added support for paid dlc
 - [Client] Added support for paid dlc
 
+---
 # v.0.4.1
 
 - [ApWorld] Fixed generation problem with multiple powerwash simulators
 - [Client] Fixed a bug when connecting with more than 1 goal level
 
+---
 # v.0.4
 
 - [ApWorld] Added `Level hunt` goal type
@@ -21,6 +29,7 @@
 - [Client] Support for `Level hunt`
 - [Client] Minor optimization to my bad code that slowed down level load times
 
+---
 # v.0.3.2
 
 - [ApWorld] Added yaml error for when no sanity exists
