@@ -1,3 +1,8 @@
+# v.0.5.3
+
+- [ApWorld] Fixed a bug where `levels_to_goal` wouldn't count "Random" as an exception to a yaml error test
+
+---
 # v.0.5.2
 
 - [ApWorld] Fixed a logic bug from a bug caused by fixing logic bugs (forgot to check goal type)
