@@ -1,3 +1,8 @@
+# v.0.5.2
+
+- [ApWorld] Fixed a logic bug from a bug caused by fixing logic bugs (forgot to check goal type)
+
+---
 # v.0.5.1
 
 - [ApWorld] Fixed logic bugs
