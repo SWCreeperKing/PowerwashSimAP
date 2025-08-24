@@ -47,6 +47,8 @@ Working on levels you don't have a `[level] Unlock` for is considered out of log
 - Launch the game again and you should see the connection input on the top left of the title screen!
 - To uninstall the mod, either remove/delete the `SW_CreeperKing.ArchipelagoMod` folder from the plugins folder or rename the winhttp.dll file located in the game's root directory (this will disable all installed mods from running).
 
+> [!Note]
+> Other mods might cause problems with levels
 
 ---
 
