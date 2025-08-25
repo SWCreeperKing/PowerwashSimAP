@@ -24,6 +24,7 @@ public static class ApDirtClient
     public static GoalType Goal = 0;
     public static long LevelCount = -1;
     public static string[] Levels = [];
+    public static long CompletedLevelCount;
     private static double NextSend = 4;
 
     public enum GoalType
@@ -83,15 +84,15 @@ public static class ApDirtClient
 
         if (slotdata.TryGetValue("goal_level_amount", out var temp4)) LevelCount = (long)temp4;
         if (LevelCount == 0) LevelCount = Levels.Length;
-        
+
         Goal = Levels.Any() && Levels[0] != "None" ? GoalType.LevelHunt : GoalType.McGuffinHunt;
-        Plugin.Log.LogInfo($"[{Goal}] | [{string.Join(", ", Levels)}] | [{startingLocation}]");
+        // Plugin.Log.LogInfo($"[{Goal}] | [{string.Join(", ", Levels)}] | [{startingLocation}]");
 
         Allowed = [LevelUnlockDictionary[$"{startingLocation} Unlock"]];
         Jobs = 0;
 
         Plugin.Log.LogInfo("Connnected");
-        GoalLevelCheck();
+        GoalLevelCheck(Client!.GetFromStorage<string[]>("levels_completed", def: [])!);
     }
 
     public static bool IsConnected()
@@ -157,19 +158,23 @@ public static class ApDirtClient
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
         var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        if (data.Contains(level)) return;
+        if (data.Contains(level))
+        {
+            GoalLevelCheck(data);
+            return;
+        }
+
         Client.SendToStorage("levels_completed", data.Append(level).ToArray());
-        GoalLevelCheck();
+        GoalLevelCheck(data);
     }
 
-    public static void GoalLevelCheck()
+    public static void GoalLevelCheck(string[] levelsCompleted)
     {
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
-        var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        if (LevelCount > data.Count(s => Levels.Contains(s))) return;
-        Client.Goal();
         UpdateAvailableLevelGoal();
+        if (LevelCount > levelsCompleted.Count(s => Levels.Contains(s))) return;
+        Client.Goal();
     }
 
     public static void UpdateAvailableLevelGoal()
@@ -177,6 +182,15 @@ public static class ApDirtClient
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
         var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        GoalLevelsOpen = Levels.Where(str => !data.Contains(str) && Allowed.Contains(LevelDictionary[str])).ToArray();
+        var seperatedLevels = Levels.GroupBy(str => data.Contains(str)).ToArray();
+        try
+        {
+            CompletedLevelCount = seperatedLevels.FirstOrDefault(g => g.Key)?.Count() ?? 0;
+            GoalLevelsOpen = seperatedLevels.FirstOrDefault(g => !g.Key)?.ToArray() ?? [];
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.LogError(e);
+        }
     }
 }

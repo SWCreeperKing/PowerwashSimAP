@@ -8,7 +8,6 @@ using BepInEx.Logging;
 using HarmonyLib;
 using PowerwashSimAP.Patches;
 using UnhollowerRuntimeLib;
-using UnityEngine;
 using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP;
@@ -20,13 +19,13 @@ public class Plugin : BasePlugin
 
     public enum DebugWant
     {
-        None,
-        General,
-        Stats,
-        Buttons,
-        Jobs,
-        Washables,
-        TranslateWashables,
+        None = 0,
+        General = 1,
+        Stats = 2,
+        Buttons = 3,
+        Jobs = 4,
+        Washables = 5,
+        TranslateWashables = 6,
     }
 
     public static DebugWant IsDebug = DebugWant.None;
@@ -36,7 +35,16 @@ public class Plugin : BasePlugin
 
     public override void Load()
     {
+        if (File.Exists("debug.txt"))
+        {
+            if (int.TryParse(File.ReadAllText("debug.txt"), out var isDebug))
+            {
+                IsDebug = (DebugWant)isDebug;
+            }
+        }
+
         Log = base.Log;
+        Log.LogInfo($"Debug Setting: [{IsDebug}]");
 
         if (!File.Exists($"{ModDir}/Locations.txt"))
         {
@@ -106,7 +114,7 @@ public class Plugin : BasePlugin
             ["FinalFantasyCampaignScreen(Clone)"] = RawLocationData.Skip(55).Take(5).Select(arr => arr[0]).ToArray(),
             ["DLCGridElement(Clone) (7)"] = ["TombRaiderCampaignScreen(Clone)"],
             ["TombRaiderCampaignScreen(Clone)"] = RawLocationData.Skip(60).Take(5).Select(arr => arr[0]).ToArray(),
-            
+
             // paid dlc
             ["DLCGridElement(Clone) (0)"] = ["CheeseCampaignScreen(Clone)"],
             ["CheeseCampaignScreen(Clone)"] = RawLocationData.Skip(65).Take(5).Select(arr => arr[0]).ToArray(),
@@ -131,29 +139,26 @@ public class Plugin : BasePlugin
         Harmony.CreateAndPatchAll(typeof(MainMenuPatch));
         Harmony.CreateAndPatchAll(typeof(MainMenuButtonPatch));
         Harmony.CreateAndPatchAll(typeof(WashTargetPatch));
+        // Harmony.CreateAndPatchAll(typeof(ShopPatch));
         // Harmony.CreateAndPatchAll(typeof(BuyPowerWasherPatch));
-
-        if (IsDebug is DebugWant.TranslateWashables)
-        {
-            StringBuilder sb = new();
-            sb.Append("raw_objectsanity_dict = {\n");
-
-            foreach (var kv in CleanParts)
-            {
-                sb.Append(
-                    $"\t\"{SceneNameToLocationName[kv.Key]}\": [{string.Join(", ", kv.Value.Select(s => $"\"{s}\""))}],\n");
-            }
-
-            sb.Append("}");
-        }
 
         if (IsDebug is DebugWant.Stats)
         {
             // Log.LogInfo(
             //     $"\n{string.Join("\n", CleanParts.OrderBy(kv => kv.Value.Length).Select(kv => $"{SceneNameToLocationName[kv.Key]} has [{kv.Value.Length}] parts"))}");
-            Log.LogInfo(
-                $"\n{string.Join("\n", CleanParts.OrderBy(kv => kv.Value.Length).Select(kv => $"{kv.Key} has [{kv.Value.Length}] parts"))}");
-            Log.LogInfo($"Predicted total checks: [{(CleanParts.Sum(kv => 100 + kv.Value.Length)):###,###}]");
+            // Log.LogInfo(
+            //     $"\n{string.Join("\n", CleanParts.OrderBy(kv => kv.Value.Length).Select(kv => $"{kv.Key} has [{kv.Value.Length}] parts"))}");
+            // Log.LogInfo($"Predicted total checks: [{(CleanParts.Sum(kv => 100 + kv.Value.Length)):###,###}]");
+
+            var pairs = CleanParts.OrderBy(kv => kv.Value.Length)
+                                  .Select(kv => (SceneNameToLocationName[kv.Key], kv.Value.Length))
+                                  .ToArray();
+            StringBuilder sb = new();
+            sb.Append("| Level Name | Part Count |\n");
+            sb.Append("|:-:|:-:|\n");
+            sb.Append(string.Join("\n", pairs.Select(pair => $"| {pair.Item1} | {pair.Length} |")));
+            sb.Append($"\n> Predicted total checks: [{CleanParts.Sum(kv => 100 + kv.Value.Length):###,###}]");
+            File.WriteAllText("stats.md", sb.ToString());
         }
 
         Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");

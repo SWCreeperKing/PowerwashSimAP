@@ -3,6 +3,11 @@
 ### DISCLAIMER: THIS MOD WILL >>NOT<< GIVE YOU THE PAID DLC FOR FREE
 ### REMINDER: YOU MUST BEAT ALL EXCEPT BONUS JOBS IN VANILLA BEFORE ADDING THEM TO THE RANDOMIZER SETTINGS
 
+> [!Note]
+> Other mods might cause problems with levels 
+
+## Features/Information
+
 - Can only play in Free Play
 - Levels are locked and need an unlock item to play them
   - unlock item is random
@@ -11,9 +16,16 @@
 - Can choose which levels to add to the level pool
 - All free dlc is added except `Seasonal Specials`
   - be careful: `Seasonal Specials` do NOT count (I can't delete them as hard as I may try)
-- Objectsanity
+- Percentsanity
+  - Total % cleaned of a level gives checks
+- Objectsanity (requires host.yaml setting to enable)
   - Cleaning individual parts gives checks
-- Current Goal Condition is McGuffin Hunt
+  - [Here is a list of levels and object count](https://github.com/SWCreeperKing/PowerwashSimAP/blob/master/stats.md)
+- Goal Conditions
+  - McGuffin Hunt
+    - find `A Job Well Done`s to goal
+  - Level Hunt
+    - complete a certain amount of required levels to goal 
 - Includes local fill (not adjustable)
 
 ### Multiplayer
@@ -28,7 +40,8 @@ Working on levels you don't have a `[level] Unlock` for is considered out of log
   - they are all connected to same slot
     - theoretically works
   - they all have different slots
-    - theoretically works
+    - confirmed to work
+    - can cause out of logic checks for different players
 
 ---
 
@@ -46,9 +59,6 @@ Working on levels you don't have a `[level] Unlock` for is considered out of log
       - check to see if your antivirus or something else that maybe interfering with BepInEx
 - Launch the game again and you should see the connection input on the top left of the title screen!
 - To uninstall the mod, either remove/delete the `SW_CreeperKing.ArchipelagoMod` folder from the plugins folder or rename the winhttp.dll file located in the game's root directory (this will disable all installed mods from running).
-
-> [!Note]
-> Other mods might cause problems with levels
 
 ---
 

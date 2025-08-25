@@ -1,7 +1,7 @@
 using System.Linq;
 using HarmonyLib;
+using Il2CppSystem.Text.RegularExpressions;
 using PWS.Analytics;
-using UnityEngine;
 using static PowerwashSimAP.ApDirtClient;
 using static PowerwashSimAP.Locations;
 using static PowerwashSimAP.Patches.WashTargetPatch;
@@ -46,18 +46,16 @@ public static class LevelProgressionPatch
 
             if (LastPercentChecked == 100)
             {
+                Plugin.Log.LogInfo($"Completed Level: [{LocationName}]");
+                SetLevelCompletion(LocationName);
+                var reg = new Regex($"^{LocationName} ( \\d{{1-3}}%$|: )", RegexOptions.Compiled);
+                
                 foreach (var loc in Client.MissingLocations.Where(kv
-                             => kv.Value.LocationName.StartsWith(LocationName)))
+                             => reg.IsMatch(kv.Value.LocationName)))
                 {
                     if (ChecksToSendQueue.Contains(loc.Key)) continue;
                     ChecksToSendQueue.Enqueue(loc.Key);
                 }
-            }
-
-            if (LastPercentChecked == 100)
-            {
-                Plugin.Log.LogInfo($"Completed Level: [{LocationName}]");
-                SetLevelCompletion(LocationName);
             }
 
             LastPercentChecked++;

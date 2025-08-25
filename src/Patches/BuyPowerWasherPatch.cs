@@ -3,8 +3,6 @@ using FuturLab;
 using HarmonyLib;
 using PWS;
 using TMPro;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace PowerwashSimAP.Patches;
 

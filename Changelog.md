@@ -1,3 +1,11 @@
+# v.0.5.4
+
+- [ApWorld] Finally replaced the band-aid fix on mcguffin hunt with a real fix
+- [ApWorld] Forced a min amount of levels required to goal for level hunt to 50% of enabled levels
+- [Client] Fixed a bug where completing a level would send locations from levels with similar starting names
+- [Client] Improved information displayed when playing with level hunt
+
+---
 # v.0.5.3
 
 - [ApWorld] Fixed a bug where `levels_to_goal` wouldn't count "Random" as an exception to a yaml error test
