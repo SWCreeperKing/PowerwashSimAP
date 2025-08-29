@@ -1,3 +1,8 @@
+# v.0.5.5
+
+- [ApWorld] Fixed a bug that included extra filler causing failure in some cases
+
+---
 # v.0.5.4
 
 - [ApWorld] Finally replaced the band-aid fix on mcguffin hunt with a real fix
