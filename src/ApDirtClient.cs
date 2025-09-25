@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CreepyUtil.Archipelago;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
@@ -12,8 +13,8 @@ namespace PowerwashSimAP;
 
 public static class ApDirtClient
 {
-    private static List<long> ChecksToSend = [];
-    public static ConcurrentQueue<long> ChecksToSendQueue = [];
+    private static List<string> ChecksToSend = [];
+    public static ConcurrentQueue<string> ChecksToSendQueue = [];
     public static ApClient? Client;
     public static long WinCondition;
     public static int Jobs;
@@ -40,7 +41,7 @@ public static class ApDirtClient
             Client = new ApClient();
             Plugin.Log.LogInfo($"Attempting to connect [{address}]:[{port}] [{password}] [{slot}]");
 
-            var connectError = Client.TryConnect(new LoginInfo(port, slot, address, password), 0x3AF4F1BC,
+            var connectError = Client.TryConnect(new LoginInfo(port, slot, address, password),
                 "Powerwash Simulator", AllItems, requestSlotData: true);
 
             if (connectError is not null && connectError.Length > 0)
@@ -91,8 +92,19 @@ public static class ApDirtClient
         Allowed = [LevelUnlockDictionary[$"{startingLocation} Unlock"]];
         Jobs = 0;
 
-        Plugin.Log.LogInfo("Connnected");
         GoalLevelCheck(Client!.GetFromStorage<string[]>("levels_completed", def: [])!);
+
+        Plugin.Log.LogInfo("Receiving Items");
+        ReceiveItems();
+        Plugin.Log.LogInfo("Connected, running failsafe checks");
+
+        foreach (var unlock in Allowed.Select(unlock => LabelNameToLocationName[unlock])
+                                      .Where(unlock => !IsMissing($"{unlock} 100%")))
+        {
+            FailsafeSendLocations(unlock);
+        }
+
+        Plugin.Log.LogInfo("Failsafe checking complete");
     }
 
     public static bool IsConnected()
@@ -112,26 +124,7 @@ public static class ApDirtClient
             SendChecks();
         }
 
-        var rawNewItems = Client.GetOutstandingItems().ToArray();
-        if (rawNewItems.Any())
-        {
-            var newItems = rawNewItems
-                          .Where(item => item?.Flags != 0)
-                          .Select(item => item?.ItemName!)
-                          .ToArray();
-
-            Jobs += newItems.Count(item => item == "A Job Well Done");
-            var newAllowed = newItems.Where(item => item.EndsWith(" Unlock"))
-                                     .Select(item => LevelUnlockDictionary[item])
-                                     .ToArray();
-
-            if (newAllowed.Any())
-            {
-                Allowed.AddRange(newAllowed);
-                Plugin.Log.LogInfo($"Unlocked: [{string.Join(", ", newAllowed)}]");
-                UpdateAvailableLevelGoal();
-            }
-        }
+        ReceiveItems();
 
         while (!ChecksToSendQueue.IsEmpty)
         {
@@ -143,8 +136,31 @@ public static class ApDirtClient
         Client.Goal();
     }
 
+    private static void ReceiveItems()
+    {
+        var rawNewItems = Client!.GetOutstandingItems().ToArray();
+        if (!rawNewItems.Any()) return;
+        var newItems = rawNewItems
+                      .Where(item => item?.Flags != 0)
+                      .Select(item => item?.ItemName!)
+                      .ToArray();
+
+        Jobs += newItems.Count(item => item == "A Job Well Done");
+        var newAllowed = newItems.Where(item => item.EndsWith(" Unlock"))
+                                 .Select(item => LevelUnlockDictionary[item])
+                                 .ToArray();
+
+        if (!newAllowed.Any()) return;
+        Allowed.AddRange(newAllowed);
+        Plugin.Log.LogInfo($"Unlocked: [{string.Join(", ", newAllowed)}]");
+        UpdateAvailableLevelGoal();
+    }
+
+    public static bool IsMissingStartsWith(string locationName)
+        => Client is not null && Client.MissingLocations.Any(id => Client.Locations[id].StartsWith(locationName));
+
     public static bool IsMissing(string locationName)
-        => Client is not null && Client.MissingLocations.Any(kv => kv.Value.LocationName.StartsWith(locationName));
+        => Client is not null && Client.MissingLocations.Contains(Client.Locations[locationName]);
 
     private static void SendChecks()
     {
@@ -192,5 +208,22 @@ public static class ApDirtClient
         {
             Plugin.Log.LogError(e);
         }
+    }
+
+    public static void FailsafeSendLocations(string locationName)
+    {
+        Plugin.Log.LogInfo($"Level Finished Detected: [{locationName}] running failsafe");
+        var reg = new Regex(@$"^{locationName}( \d{{1,3}}%$|: )", RegexOptions.Compiled);
+
+        var missing = 0;
+        foreach (var loc in Client!.MissingLocations.Where(id
+                                        => reg.IsMatch(Client.Locations[id]))
+                                   .Select(loc => Client.Locations[loc]))
+        {
+            if (ChecksToSendQueue.Contains(loc)) continue;
+            ChecksToSendQueue.Enqueue(loc);
+            missing++;
+        }
+        Plugin.Log.LogInfo($"Failsafe Finished, Sent [{missing}] failed checks");
     }
 }

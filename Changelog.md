@@ -1,3 +1,13 @@
+# v.0.5.6 
+
+- [Client] Fixed a bug with the failsafe not failsafing
+- [ApWorld] Added Universal Tracker support
+- [ApWorld] Fixed a check preventing the below 50% from working properly
+
+> [!WARNING]
+> FAILSAFE MIGHT BE TRIGGER HAPPY, HOST DISCRETION ADVISED
+
+---
 # v.0.5.5
 
 - [ApWorld] Fixed a bug that included extra filler causing failure in some cases

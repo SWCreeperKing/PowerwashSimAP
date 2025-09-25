@@ -17,7 +17,7 @@
 
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Copy
-                SourceFiles="bin/Debug/net48//PowerwashSimAP.dll"
+                SourceFiles="bin/Debug/net48/PowerwashSimAP.dll"
                 DestinationFolder="../../BepInEx/plugins/SW_CreeperKing.ArchipelagoMod"
         />
     </Target>

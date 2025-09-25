@@ -40,15 +40,14 @@ public static class WashTargetPatch
                 LocationName = $"{SceneNameToLocationName[gameObject.scene.name]}: {gameObject.name.Replace("_", " ")}";
             }
 
-            if (Client.MissingLocations.All(kv => kv.Value.LocationName != LocationName))
+            if (IsMissing(LocationName))
             {
                 enabled = false;
                 return;
             }
 
-            var location = Client.MissingLocations.First(kv => kv.Value.LocationName == LocationName).Key;
-            if (ChecksToSendQueue.Contains(location)) return;
-            ChecksToSendQueue.Enqueue(location);
+            if (ChecksToSendQueue.Contains(LocationName)) return;
+            ChecksToSendQueue.Enqueue(LocationName);
             enabled = false;
         }
     }

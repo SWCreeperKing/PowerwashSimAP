@@ -20,8 +20,9 @@ public static class LevelProgressionPatch
         {
             washTarget.gameObject.GetOrAddComponent<WashTargetUpdate>();
         }
+
         GlobalTargets = [];
-        
+
         if (Plugin.IsDebug is Plugin.DebugWant.Washables)
         {
             CleanParts[__instance.gameObject.scene.name] = WashTargets.OrderBy(s => s).ToArray();
@@ -48,23 +49,12 @@ public static class LevelProgressionPatch
             {
                 Plugin.Log.LogInfo($"Completed Level: [{LocationName}]");
                 SetLevelCompletion(LocationName);
-                var reg = new Regex($"^{LocationName} ( \\d{{1-3}}%$|: )", RegexOptions.Compiled);
-                
-                foreach (var loc in Client.MissingLocations.Where(kv
-                             => reg.IsMatch(kv.Value.LocationName)))
-                {
-                    if (ChecksToSendQueue.Contains(loc.Key)) continue;
-                    ChecksToSendQueue.Enqueue(loc.Key);
-                }
+                FailsafeSendLocations(LocationName);
             }
 
             LastPercentChecked++;
-            if (Client.MissingLocations.All(kv => kv.Value.LocationName != percentName)) continue;
-            var location = Client.MissingLocations.First(kv => kv.Value.LocationName == percentName).Key;
-            if (!ChecksToSendQueue.Contains(location))
-            {
-                ChecksToSendQueue.Enqueue(location);
-            }
+            if (!IsMissing(percentName)) return;
+            ChecksToSendQueue.Enqueue(percentName);
         }
     }
 }

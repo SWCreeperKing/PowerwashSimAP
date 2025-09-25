@@ -18,6 +18,17 @@ public static class JobLevelPatch
         
         if (Client is null) return;
         if (Plugin.IsDebug is not Plugin.DebugWant.None) return;
-        __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissing(LabelNameToLocationName[sceneName]));
+        __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissingStartsWith(LabelNameToLocationName[sceneName]));
     }
+    
+    // //todo: test
+    // [HarmonyPatch(typeof(SaveManager), "HasJobBeenPlayed"), HarmonyPrefix]
+    // public static bool Prefix(ref bool __result)
+    // {
+    //     // Pretend every job has been played
+    //     __result = true;
+    //
+    //     // Skip original method
+    //     return false;
+    // }
 }
