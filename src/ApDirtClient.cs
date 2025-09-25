@@ -173,15 +173,11 @@ public static class ApDirtClient
     {
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
-        var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        if (data.Contains(level))
-        {
-            GoalLevelCheck(data);
-            return;
-        }
-
-        Client.SendToStorage("levels_completed", data.Append(level).ToArray());
-        GoalLevelCheck(data);
+        var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!.ToHashSet();
+        data.Add(level);
+        
+        Client.SendToStorage("levels_completed", data.ToArray());
+        GoalLevelCheck(data.ToArray());
     }
 
     public static void GoalLevelCheck(string[] levelsCompleted)
@@ -224,6 +220,7 @@ public static class ApDirtClient
             ChecksToSendQueue.Enqueue(loc);
             missing++;
         }
+
         Plugin.Log.LogInfo($"Failsafe Finished, Sent [{missing}] failed checks");
     }
 }

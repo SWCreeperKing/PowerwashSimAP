@@ -1,3 +1,9 @@
+# v.0.5.7
+
+- [Client] Fixed a bug where level hunt would fail to goal
+
+---
+
 # v.0.5.6 
 
 - [Client] Fixed a bug with the failsafe not failsafing
