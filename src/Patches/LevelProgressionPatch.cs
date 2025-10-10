@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using HarmonyLib;
 using Il2CppSystem.Text.RegularExpressions;
@@ -53,7 +54,7 @@ public static class LevelProgressionPatch
             }
 
             LastPercentChecked++;
-            if (!IsMissing(percentName)) return;
+            if (!IsMissing(percentName)) continue;
             ChecksToSendQueue.Enqueue(percentName);
         }
     }

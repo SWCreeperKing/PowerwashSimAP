@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CreepyUtil.Archipelago;
+using CreepyUtil.Archipelago.ApClient;
 using UnityEngine;
 using static Archipelago.MultiClient.Net.Enums.ItemsHandlingFlags;
+using static CreepyUtil.Archipelago.ApClient.ApClient;
 using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP;
@@ -26,8 +28,10 @@ public static class ApDirtClient
     public static long LevelCount = -1;
     public static string[] Levels = [];
     public static long CompletedLevelCount;
+    public static HashSet<string> CachedLevelsCompleted = [];
     private static double NextSend = 4;
-
+    private static Dictionary<string, Regex> RegexCache = [];
+    
     public enum GoalType
     {
         McGuffinHunt = 0,
@@ -89,17 +93,20 @@ public static class ApDirtClient
         Goal = Levels.Any() && Levels[0] != "None" ? GoalType.LevelHunt : GoalType.McGuffinHunt;
         // Plugin.Log.LogInfo($"[{Goal}] | [{string.Join(", ", Levels)}] | [{startingLocation}]");
 
-        Allowed = [LevelUnlockDictionary[$"{startingLocation} Unlock"]];
+        Allowed = [LevelDictionary[startingLocation]];
+        Plugin.Log.LogInfo($"Starting: [{LabelNameToLocationName[Allowed[0]]}]");
         Jobs = 0;
 
-        GoalLevelCheck(Client!.GetFromStorage<string[]>("levels_completed", def: [])!);
 
         Plugin.Log.LogInfo("Receiving Items");
         ReceiveItems();
         Plugin.Log.LogInfo("Connected, running failsafe checks");
 
-        foreach (var unlock in Allowed.Select(unlock => LabelNameToLocationName[unlock])
-                                      .Where(unlock => !IsMissing($"{unlock} 100%")))
+        CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.ToHashSet();
+        GoalLevelCheck(CachedLevelsCompleted.ToArray());
+        
+        Plugin.Log.LogInfo($"Completed Levels ({CachedLevelsCompleted.Count}): \n> {string.Join("\n> ", CachedLevelsCompleted.Select(s => $"[{s}]"))}");
+        foreach (var unlock in CachedLevelsCompleted)
         {
             FailsafeSendLocations(unlock);
         }
@@ -109,16 +116,16 @@ public static class ApDirtClient
 
     public static bool IsConnected()
     {
-        return Client is not null && Client.IsConnected && Client.Session.Socket.Connected;
+        return Client is not null && Client.IsConnected;
     }
 
     public static void Update()
     {
         if (Client is null) return;
         Client.UpdateConnection();
-        if (Client?.Session?.Socket is null || !Client.IsConnected) return;
+        if (!Client.IsConnected) return;
 
-        NextSend -= Time.deltaTime;
+        NextSend -= DeltaTime;
         if (ChecksToSend.Any() && NextSend <= 0)
         {
             SendChecks();
@@ -152,19 +159,23 @@ public static class ApDirtClient
 
         if (!newAllowed.Any()) return;
         Allowed.AddRange(newAllowed);
-        Plugin.Log.LogInfo($"Unlocked: [{string.Join(", ", newAllowed)}]");
+        Plugin.Log.LogInfo($"New allowed: [{string.Join(", ", newAllowed.Select(s => LabelNameToLocationName[s]))}]");
         UpdateAvailableLevelGoal();
     }
 
-    public static bool IsMissingStartsWith(string locationName)
-        => Client is not null && Client.MissingLocations.Any(id => Client.Locations[id].StartsWith(locationName));
+    public static bool IsMissingNonStrict(string locationName)
+    {
+        var regex = LevelRegex(locationName);
+        return Client is not null && Client.MissingLocations.Any(id => regex.IsMatch(id));
+    }
 
     public static bool IsMissing(string locationName)
-        => Client is not null && Client.MissingLocations.Contains(Client.Locations[locationName]);
+        => Client is not null && Client.MissingLocations.Contains(locationName);
 
     private static void SendChecks()
     {
         NextSend = 3;
+        Plugin.Log.LogInfo($"Send checks: [{string.Join(", ", ChecksToSend)}]");
         Client?.SendLocations(ChecksToSend.ToArray());
         ChecksToSend.Clear();
     }
@@ -172,12 +183,10 @@ public static class ApDirtClient
     public static void SetLevelCompletion(string level)
     {
         if (Client is null) return;
+        CachedLevelsCompleted.Add(level);
+        Client.SendToStorage("levels_completed", CachedLevelsCompleted.ToArray());
         if (Goal is GoalType.McGuffinHunt) return;
-        var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!.ToHashSet();
-        data.Add(level);
-        
-        Client.SendToStorage("levels_completed", data.ToArray());
-        GoalLevelCheck(data.ToArray());
+        GoalLevelCheck(CachedLevelsCompleted.ToArray());
     }
 
     public static void GoalLevelCheck(string[] levelsCompleted)
@@ -193,8 +202,7 @@ public static class ApDirtClient
     {
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
-        var data = Client.GetFromStorage<string[]>("levels_completed", def: [])!;
-        var seperatedLevels = Levels.GroupBy(str => data.Contains(str)).ToArray();
+        var seperatedLevels = Levels.GroupBy(str => CachedLevelsCompleted.Contains(str)).ToArray();
         try
         {
             CompletedLevelCount = seperatedLevels.FirstOrDefault(g => g.Key)?.Count() ?? 0;
@@ -209,12 +217,10 @@ public static class ApDirtClient
     public static void FailsafeSendLocations(string locationName)
     {
         Plugin.Log.LogInfo($"Level Finished Detected: [{locationName}] running failsafe");
-        var reg = new Regex(@$"^{locationName}( \d{{1,3}}%$|: )", RegexOptions.Compiled);
+        var reg = LevelRegex(locationName);
 
         var missing = 0;
-        foreach (var loc in Client!.MissingLocations.Where(id
-                                        => reg.IsMatch(Client.Locations[id]))
-                                   .Select(loc => Client.Locations[loc]))
+        foreach (var loc in Client!.MissingLocations.Where(id=> reg.IsMatch(id)))
         {
             if (ChecksToSendQueue.Contains(loc)) continue;
             ChecksToSendQueue.Enqueue(loc);
@@ -222,5 +228,11 @@ public static class ApDirtClient
         }
 
         Plugin.Log.LogInfo($"Failsafe Finished, Sent [{missing}] failed checks");
+    }
+
+    public static Regex LevelRegex(string locationName)
+    {
+        if (RegexCache.TryGetValue(locationName, out var regex)) return regex;
+        return RegexCache[locationName] = new Regex(@$"^{locationName.Replace("(", "\\(").Replace(")", "\\)")}( \d{{1,3}}%$|: )", RegexOptions.Compiled);
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Il2CppSystem;
 using UnityEngine;
+using static CreepyUtil.Archipelago.ApClient.ApClient;
 using static PowerwashSimAP.ApDirtClient;
 using static PowerwashSimAP.Locations;
 
@@ -54,9 +55,24 @@ public class APGui : MonoBehaviour
         Slot = fileText[2];
     }
 
+    public static GameObject Updator;
+
+    private void Start()
+    {
+        if (Updator is not null) return;
+        Updator = new GameObject("ap_updator");
+        var updator = Updator.AddComponent<Updatinator>();
+        updator.Action = () =>
+        {
+            UpdateDeltaTime();
+            if (Client is null) return;
+            Update();
+        };
+    }
+
     void OnGUI()
     {
-        TimeAccumulator += Time.deltaTime;
+        TimeAccumulator += DeltaTime;
         if (Plugin.IsDebug is Plugin.DebugWant.Washables)
         {
             if (GUI.Button(new Rect(20 + Offset.x, 210 + Offset.y, 300, 30), "Save Washables"))
@@ -103,15 +119,24 @@ public class APGui : MonoBehaviour
             }
             else if (GoalLevelsOpen.Any())
             {
-                var sixtySecondBarrier = Math.Floor(TimeAccumulator / 30);
-                var index = (int)(sixtySecondBarrier % GoalLevelsOpen.Length);
+                try
+                {
+                    var sixtySecondBarrier = Math.Floor(TimeAccumulator / 20);
+                    var index = (int)(sixtySecondBarrier % GoalLevelsOpen.Length);
 
-                GUI.Label(new Rect(20 + Offset.x, Offset.y + 150, 150, 35),
-                    $"""
-                     Req. Completed Levels: ({CompletedLevelCount}/{LevelCount})
-                     Levels of interest ({index + 1}/{GoalLevelsOpen.Length}):
-                     [{GoalLevelsOpen[index]}]
-                     """, TextStyle);
+                    GUI.Label(new Rect(20 + Offset.x, Offset.y + 150, 150, 35),
+                        $"""
+                         Req. Completed Levels: ({CompletedLevelCount}/{LevelCount})
+                         Levels of interest ({index + 1}/{GoalLevelsOpen.Length}):
+                         """, TextStyle);
+                    var has = Allowed.Contains(LevelDictionary[GoalLevelsOpen[index]]);
+                    GUI.Label(new Rect(20 + Offset.x, Offset.y + 180, 150, 35), $"[{GoalLevelsOpen[index]}]",
+                        has ? TextStyleGreen : TextStyleRed);
+                }
+                catch (System.Exception e)
+                {
+                    Plugin.Log.LogError(e);
+                }
             }
         }
 
@@ -146,6 +171,4 @@ public class APGui : MonoBehaviour
             State != "" ? State : IsConnected() ? "Connected" : "Not Connected",
             IsConnected() ? TextStyleGreen : TextStyleRed);
     }
-
-    private void Update() => ApDirtClient.Update();
 }

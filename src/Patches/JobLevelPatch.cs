@@ -10,6 +10,7 @@ public static class JobLevelPatch
     [HarmonyPatch(typeof(JobListElement), "Start"), HarmonyPostfix]
     public static void Init(JobListElement __instance)
     {
+        if (__instance.Content?.UniqueName is null) return;
         var sceneName = __instance.Content.UniqueName;
         if (Plugin.IsDebug is Plugin.DebugWant.Jobs)
         {
@@ -18,7 +19,7 @@ public static class JobLevelPatch
         
         if (Client is null) return;
         if (Plugin.IsDebug is not Plugin.DebugWant.None) return;
-        __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissingStartsWith(LabelNameToLocationName[sceneName]));
+        __instance.gameObject.SetActive(Allowed.Contains(sceneName) && IsMissingNonStrict(LabelNameToLocationName[sceneName]));
     }
     
     // //todo: test

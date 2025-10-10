@@ -1,3 +1,17 @@
+# v0.5.10
+
+- [Client] Fixed a bug with level completion not being recorded correctly causing problems
+- [Client] Fixed an instance of not converting () -> \\(\\) for regex causing `Recreational Vehicle (Again)` not to behave properly in neither failsafe or displaying level UI
+
+# v0.5.9
+
+- [Client] Fixed failsafe from being susceptible to collect
+- [Client] Fixed mod UI manipulation from being susceptible to collect
+- [Client] Made the mod more responsive to archipelago
+- [Client] Fixed a bug that desynced internal level progress with game level progress when save-quiting (fix applied retroactively)
+- [Client] Improved level hunt indicator (red if you don't have the level, green if you do)
+
+---
 # v0.5.8
 
 - [ApWorld] Improved/Fixed Universal Tracker integration

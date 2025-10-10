@@ -134,6 +134,7 @@ public class Plugin : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<MainMenuButtonPatch.AlwaysInvisible>();
         ClassInjector.RegisterTypeInIl2Cpp<MainMenuButtonPatch.VisibleControlComponent>();
         ClassInjector.RegisterTypeInIl2Cpp<WashTargetPatch.WashTargetUpdate>();
+        ClassInjector.RegisterTypeInIl2Cpp<Updatinator>();
         Harmony.CreateAndPatchAll(typeof(LevelProgressionPatch));
         Harmony.CreateAndPatchAll(typeof(JobLevelPatch));
         Harmony.CreateAndPatchAll(typeof(MainMenuPatch));
