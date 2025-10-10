@@ -40,7 +40,7 @@ public static class WashTargetPatch
                 LocationName = $"{SceneNameToLocationName[gameObject.scene.name]}: {gameObject.name.Replace("_", " ")}";
             }
 
-            if (IsMissing(LocationName))
+            if (!IsMissing(LocationName))
             {
                 enabled = false;
                 return;

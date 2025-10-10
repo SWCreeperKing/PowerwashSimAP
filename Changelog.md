@@ -1,8 +1,15 @@
+# v0.5.11
+
+- [ApWorld] Raised errors instead of defaulting for amount_to_goal for level hunt
+- [Client] Fixed Objectsanity checks not sending at all
+
+---
 # v0.5.10
 
 - [Client] Fixed a bug with level completion not being recorded correctly causing problems
 - [Client] Fixed an instance of not converting () -> \\(\\) for regex causing `Recreational Vehicle (Again)` not to behave properly in neither failsafe or displaying level UI
-
+- 
+---
 # v0.5.9
 
 - [Client] Fixed failsafe from being susceptible to collect
