@@ -1,3 +1,8 @@
+# v0.5.12
+
+- [ApWorld] Fixed a bug where local fill was being too stingy about its possible locations
+
+---
 # v0.5.11
 
 - [ApWorld] Raised errors instead of defaulting for amount_to_goal for level hunt
