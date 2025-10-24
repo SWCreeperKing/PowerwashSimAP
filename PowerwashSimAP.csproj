@@ -4,7 +4,7 @@
         <TargetFramework>net48</TargetFramework>
         <AssemblyName>PowerwashSimAP</AssemblyName>
         <Product>PowerwashSimArchipelagoRandomizer</Product>
-        <Version>1.0.0</Version>
+        <Version>0.6.0</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>13</LangVersion>
         <RestoreAdditionalProjectSources>
