@@ -19,3 +19,14 @@ public static class HasJobBeenPlayedPatch
         return false;
     }
 }
+
+public static class FreePlayUnlockPatch
+{
+    [HarmonyPatch(typeof(CampaignSaveData), "IsFreePlayUnlocked"), HarmonyPrefix]
+    static bool IsFreePlayUnlocked_Prefix(ref bool __result)
+    {
+        __result = true;  // All jobs unlocked, period
+        return false;     // Skip original method entirely
+    }
+}
+

@@ -141,6 +141,7 @@ public class Plugin : BasePlugin
         Harmony.CreateAndPatchAll(typeof(MainMenuButtonPatch));
         Harmony.CreateAndPatchAll(typeof(WashTargetPatch));
         Harmony.CreateAndPatchAll(typeof(HasJobBeenPlayedPatch));
+        Harmony.CreateAndPatchAll(typeof(FreePlayUnlockPatch));
         // Harmony.CreateAndPatchAll(typeof(ShopPatch));
         // Harmony.CreateAndPatchAll(typeof(BuyPowerWasherPatch));
 
