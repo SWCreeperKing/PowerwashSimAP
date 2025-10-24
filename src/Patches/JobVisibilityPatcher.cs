@@ -8,7 +8,7 @@ namespace PowerwashSimAP.Patches;
 
 public static class HasJobBeenPlayedPatch
 {
-    [HarmonyPatch(typeof(PWS.SaveManager), "HasJobBeenPlayed"), HarmonyPrefix]
+    [HarmonyPatch(typeof(SaveManager), "HasJobBeenPlayed"), HarmonyPrefix]
     public static bool Prefix(ref bool __result)
     {
         Plugin.Log.LogInfo($"HasJobBeenPlayedPatch::Prefix called, patching function");
