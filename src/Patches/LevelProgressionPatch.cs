@@ -39,7 +39,7 @@ public static class LevelProgressionPatch
     [HarmonyPatch(typeof(LevelProgressionSender), "HandleProgressChanged"), HarmonyPostfix]
     public static void ProgressChanged(LevelProgressionSender __instance)
     {
-        if (Client is null || !Percentsanity) return;
+        if (Client is null) return;
 
         var percentage = __instance.m_currentPercentage;
         while (LastPercentChecked <= percentage)
@@ -54,7 +54,7 @@ public static class LevelProgressionPatch
             }
 
             LastPercentChecked++;
-            if (!IsMissing(percentName)) continue;
+            if (!IsMissing(percentName) || !Percentsanity) continue;
             ChecksToSendQueue.Enqueue(percentName);
         }
     }

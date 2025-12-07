@@ -62,7 +62,8 @@ public static class MainMenuButtonPatch
     public static bool IsAnyChildVisible(string locationName)
     {
         if (Client is null) return false;
-        if (Allowed.Contains(locationName)) return IsMissingNonStrict(LabelNameToLocationName[locationName]);
+        // if (Allowed.Contains(locationName)) return IsMissingNonStrict(LabelNameToLocationName[locationName]);
+        if (Allowed.Contains(locationName)) return Allowed.Contains(locationName) && !CachedLevelsCompleted.Contains(LabelNameToLocationName[locationName]);
         return Lookahead.TryGetValue(locationName, out var nextUp) && nextUp.Any(IsAnyChildVisible);
     }
 

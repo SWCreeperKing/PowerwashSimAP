@@ -103,6 +103,7 @@ public static class ApDirtClient
         Plugin.Log.LogInfo("Connected, running failsafe checks");
 
         CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.ToHashSet();
+        Plugin.Log.LogInfo($"Levels Completed: [{CachedLevelsCompleted.Count}]:[{string.Join(", ", CachedLevelsCompleted)}]");
         GoalLevelCheck(CachedLevelsCompleted.ToArray());
         
         Plugin.Log.LogInfo($"Completed Levels ({CachedLevelsCompleted.Count}): \n> {string.Join("\n> ", CachedLevelsCompleted.Select(s => $"[{s}]"))}");
@@ -182,16 +183,25 @@ public static class ApDirtClient
 
     public static void SetLevelCompletion(string level)
     {
-        if (Client is null) return;
-        CachedLevelsCompleted.Add(level);
-        Client.SendToStorage("levels_completed", CachedLevelsCompleted.ToArray());
-        if (Goal is GoalType.McGuffinHunt) return;
-        GoalLevelCheck(CachedLevelsCompleted.ToArray());
+        try
+        {
+            if (Client is null) return;
+            Plugin.Log.LogInfo("Set Level Completion");
+            CachedLevelsCompleted.Add(level);
+            Client.SendToStorage("levels_completed", CachedLevelsCompleted.ToArray());
+            if (Goal is GoalType.McGuffinHunt) return;
+            GoalLevelCheck(CachedLevelsCompleted.ToArray());
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.LogError(e);
+        }
     }
 
     public static void GoalLevelCheck(string[] levelsCompleted)
     {
         if (Client is null) return;
+        Plugin.Log.LogInfo($"Goal Level Check: [{Goal}]");
         if (Goal is GoalType.McGuffinHunt) return;
         UpdateAvailableLevelGoal();
         if (LevelCount > levelsCompleted.Count(s => Levels.Contains(s))) return;
@@ -202,16 +212,20 @@ public static class ApDirtClient
     {
         if (Client is null) return;
         if (Goal is GoalType.McGuffinHunt) return;
-        var seperatedLevels = Levels.GroupBy(str => CachedLevelsCompleted.Contains(str)).ToArray();
+        var separatedLevels = Levels.GroupBy(str => CachedLevelsCompleted.Contains(str)).ToArray();
         try
         {
-            CompletedLevelCount = seperatedLevels.FirstOrDefault(g => g.Key)?.Count() ?? 0;
-            GoalLevelsOpen = seperatedLevels.FirstOrDefault(g => !g.Key)?.ToArray() ?? [];
+            CompletedLevelCount = separatedLevels.FirstOrDefault(g => g.Key)?.Count() ?? 0;
+            GoalLevelsOpen = separatedLevels.FirstOrDefault(g => !g.Key)?.ToArray() ?? [];
         }
         catch (Exception e)
         {
             Plugin.Log.LogError(e);
         }
+        Plugin.Log.LogInfo("Update Avail Level Goal");
+        Plugin.Log.LogInfo($"Sep: [{separatedLevels.Length}]: [{string.Join(", ", separatedLevels.Select(g => $"({g.Key} ,{g.Count()})"))}]");
+        Plugin.Log.LogInfo($"Complete: [{CompletedLevelCount}]");
+        Plugin.Log.LogInfo($"Open: [{GoalLevelsOpen.Length}]: [{string.Join(", ", GoalLevelsOpen)}]");
     }
 
     public static void FailsafeSendLocations(string locationName)
