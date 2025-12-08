@@ -1,3 +1,8 @@
+# v0.5.14
+
+- [Client] Fixed a bug that prevents connecting to ap if you have done one of the 4 seasonal levels
+
+---
 # v0.5.13
 
 - [ApWorld] Fixed 2 minor yaml options bug
@@ -6,6 +11,7 @@
 - [Client] Fixed a bug preventing levels from being completed if you didn't have percentsanity on
 - [Client] Made UI responsive to levels completed vs if all checks gotten
 
+---
 # v0.5.12
 
 - [ApWorld] Fixed a bug where local fill was being too stingy about its possible locations
@@ -21,7 +27,7 @@
 
 - [Client] Fixed a bug with level completion not being recorded correctly causing problems
 - [Client] Fixed an instance of not converting () -> \\(\\) for regex causing `Recreational Vehicle (Again)` not to behave properly in neither failsafe or displaying level UI
-- 
+
 ---
 # v0.5.9
 

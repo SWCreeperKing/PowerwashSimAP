@@ -39,7 +39,7 @@ public static class LevelProgressionPatch
     [HarmonyPatch(typeof(LevelProgressionSender), "HandleProgressChanged"), HarmonyPostfix]
     public static void ProgressChanged(LevelProgressionSender __instance)
     {
-        if (Client is null) return;
+        if (Client is null || !LevelDictionary.ContainsKey(LocationName)) return;
 
         var percentage = __instance.m_currentPercentage;
         while (LastPercentChecked <= percentage)

@@ -102,7 +102,7 @@ public static class ApDirtClient
         ReceiveItems();
         Plugin.Log.LogInfo("Connected, running failsafe checks");
 
-        CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.ToHashSet();
+        CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.Where(s => LevelDictionary.ContainsKey(s)).ToHashSet();
         Plugin.Log.LogInfo($"Levels Completed: [{CachedLevelsCompleted.Count}]:[{string.Join(", ", CachedLevelsCompleted)}]");
         GoalLevelCheck(CachedLevelsCompleted.ToArray());
         
