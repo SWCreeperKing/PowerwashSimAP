@@ -42,7 +42,8 @@ public static class ApDirtClient
     {
         try
         {
-            Client = new ApClient();
+            Client = new ApClient(new TimeSpan(0, 1, 0));
+            Client.OnConnectionErrorReceived += (e, _) => Plugin.Log.LogError(e);
             Plugin.Log.LogInfo($"Attempting to connect [{address}]:[{port}] [{password}] [{slot}]");
 
             var connectError = Client.TryConnect(new LoginInfo(port, slot, address, password),
@@ -50,7 +51,8 @@ public static class ApDirtClient
 
             if (connectError is not null && connectError.Length > 0)
             {
-                Plugin.Log.LogInfo("There was an Error");
+                Plugin.Log.LogInfo("There was a Connection Error");
+                Plugin.Log.LogError($"{string.Join("\n", connectError)}");
                 Disconnect();
                 return connectError;
             }
@@ -60,6 +62,7 @@ public static class ApDirtClient
         catch (Exception e)
         {
             Plugin.Log.LogInfo("There was an Error");
+            Plugin.Log.LogError(e);
             Disconnect();
             return [e.Message, e.StackTrace!];
         }
@@ -96,13 +99,12 @@ public static class ApDirtClient
         Allowed = [LevelDictionary[startingLocation]];
         Plugin.Log.LogInfo($"Starting: [{LabelNameToLocationName[Allowed[0]]}]");
         Jobs = 0;
-
-
+        
         Plugin.Log.LogInfo("Receiving Items");
         ReceiveItems();
         Plugin.Log.LogInfo("Connected, running failsafe checks");
 
-        CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.Where(s => LevelDictionary.ContainsKey(s)).ToHashSet();
+        CachedLevelsCompleted = Client!.GetFromStorage<string[]>("levels_completed", def: [])!.Where(s => s is not null && LevelDictionary.ContainsKey(s)).ToHashSet();
         Plugin.Log.LogInfo($"Levels Completed: [{CachedLevelsCompleted.Count}]:[{string.Join(", ", CachedLevelsCompleted)}]");
         GoalLevelCheck(CachedLevelsCompleted.ToArray());
         
@@ -127,6 +129,7 @@ public static class ApDirtClient
         if (!Client.IsConnected) return;
 
         NextSend -= DeltaTime;
+        // Plugin.Log.LogMessage("e");
         if (ChecksToSend.Any() && NextSend <= 0)
         {
             SendChecks();
@@ -134,6 +137,7 @@ public static class ApDirtClient
 
         ReceiveItems();
 
+        // Plugin.Log.LogMessage("d");
         while (!ChecksToSendQueue.IsEmpty)
         {
             ChecksToSendQueue.TryDequeue(out var location);

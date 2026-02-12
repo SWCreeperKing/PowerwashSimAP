@@ -12,9 +12,10 @@ using static PowerwashSimAP.Locations;
 
 namespace PowerwashSimAP;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("PowerwashSimAP", "PowerwashSimArchipelagoRandomizer", VersionNumber)]
 public class Plugin : BasePlugin
 {
+    public const string VersionNumber = "v0.5.14";
     public const string ModDir = "BepInEx/plugins/SW_CreeperKing.ArchipelagoMod";
 
     public enum DebugWant

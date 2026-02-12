@@ -1,6 +1,8 @@
 # v0.5.14
 
 - [Client] Fixed a bug that prevents connecting to ap if you have done one of the 4 seasonal levels
+- [Client] Increased connection time out time from 4s to 60s
+- [Client] Updated wrapper library to include the pr'd fix for read_slot_data
 
 ---
 # v0.5.13
