@@ -50,6 +50,7 @@ Working on levels you don't have a `[level] Unlock` for is considered out of log
 
 - Download [BepInEx 6.0.0-pre1](https://github.com/BepInEx/BepInEx/releases/download/v6.0.0-pre.1/BepInEx_UnityIL2CPP_x64_6.0.0-pre.1.zip).
 - Extract the BepInEx zip folder you downloaded from the previous step into your game's install directory (For example: C:\Program Files (x86)\Steam\steamapps\common\PowerWash Simulator)
+  - the contents from the extraction: BepinEx, mono, changelog, doorstop_config, winhttp.dll should be in the same directory as the game
 - Launch the game and close it. This will finalize the BepInEx installation.
 - Download and extract the `SW_CreeperKing.ArchipelagoMod.Zip` from the [latest release page](https://github.com/SWCreeperKing/PowerwashSimAP/releases/latest).
     - Copy the `SW_CreeperKing.ArchipelagoMod` folder from the release zip into `BepInEx/plugins` under your game's install directory.
