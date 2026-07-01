@@ -30,3 +30,13 @@ public static class FreePlayUnlockPatch
     }
 }
 
+public static class UnlockAllEquipmentPatch
+{
+    [HarmonyPatch(typeof(GameStateManager), "IsEquipmentUnlocked", typeof(BaseEquipmentData)), HarmonyPrefix]
+    public static bool IsEquipmentUnlocked_Prefix(ref bool __result)
+    {
+        // Plugin.Log.LogInfo("IsEquipmentUnlocked patch: returning true for all equipment");
+        __result = true;
+        return false;
+    }
+}

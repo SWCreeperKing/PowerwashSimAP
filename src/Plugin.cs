@@ -145,6 +145,7 @@ public class Plugin : BasePlugin
         Harmony.CreateAndPatchAll(typeof(FreePlayUnlockPatch));
         // Harmony.CreateAndPatchAll(typeof(ShopPatch));
         // Harmony.CreateAndPatchAll(typeof(BuyPowerWasherPatch));
+        Harmony.CreateAndPatchAll(typeof(UnlockAllEquipmentPatch));
 
         if (IsDebug is DebugWant.Stats)
         {
